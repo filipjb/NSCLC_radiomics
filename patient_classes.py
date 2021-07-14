@@ -1,5 +1,4 @@
 import os
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pydicom as dicom
@@ -28,22 +27,40 @@ class Patient:
         self.deadstatus = deadstatus
         self.dicoms = []
 
-    # This method will take in a path to a folder containg all the
-    # .dcm files, the ones named in the way Lung1-xxx constituting
-    # the image sequence for the patient and assigning the dcm
-    # datastructs to a class variable for the Patient
-    def assign_dicom_files(self, path):
-        # Selecting the first folder inside the folder named Lung1-xxx,
-        # which contains three folder, the top which contains our
-        # dicom files
+    # This method will take in the path to the folder containing
+    # all the the subfolders named with the patient-ID: Lung1-xxx,
+    # and return the image correct image array of the patient, using
+    # self.patientID to find the correct directory and image array
+    def return_image_array(self, path):
+        # Changing directory to the folder contatining patient
+        # subfolders
         os.chdir(path)
-        os.chdir(os.listdir(path)[0])
-        # Selecting the first folder inside this directory
-        os.chdir(os.listdir(os.getcwd())[0])
-        names = os.listdir(os.getcwd())
-        for filename in names:
-            dataset = dicom.dcmread(filename)
-            self.dicoms.append(dataset)
+        # Managing if the user has provided a faulty or wrong path
+        try:
+            # Entering the directory with the name of the patient
+            os.chdir(str(self.patientID))
+            # If no file is found with the patientID in the provided
+            # path an error is returned to the user, and the process
+            # is terminated
+        except FileNotFoundError as e:
+            print(f"\nError: The specified path is not a directory containing"
+                  f" the expected patient-ID: {self.patientID}")
+        else:
+            # Entering the top folder in this directory
+            os.chdir(os.listdir(os.getcwd())[0])
+            # Again entering the top folder inside this directory, which contains
+            # all the dicom files for the patient
+            os.chdir(os.listdir(os.getcwd())[0])
+            images = []
+            # Looping through and reading the .dcm files in the folder
+            for filename in os.listdir(os.getcwd()):
+                dataset = dicom.dcmread(filename)
+                # Exctracting the image array from the dicom dataset
+                image_array = dataset.pixel_array
+                # And appending it to the total array of all images of the patient
+                images.append(image_array)
+
+            return np.array(images)
 
     def __str__(self):
         return f"{self.patientID}"
@@ -261,19 +278,14 @@ if __name__ == '__main__':
     patient2 = Patient("LUNG1-002", 83.8001, 2, 0, 0, "I", "squamous cell carcinoma", "male", 155, 1)
     patient3 = Patient("LUNG1-003", 68.1807, 2, 3, 0, "IIIb", "large cell", "male", 256, 1)
 
-    print(patient1.age)
-
     group = StudyGroup()
     group.add_patient(patient1)
     group.add_patient(patient2)
     group.add_patient(patient3)
 
-    print(group)
-
-    patient1.assign_dicom_files("C:/Users/filip/Desktop/manifest-1620727734122/NSCLC-Radiomics/Lung1-001")
-
-    image1 = patient1.dicoms[44].pixel_array
+    array1 = patient1.return_image_array("C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics")
+    print(np.shape(array1))
 
     plt.gray()
-    plt.imshow(image1)
+    plt.imshow(array1[6, :, :])
     plt.show()
