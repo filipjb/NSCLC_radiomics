@@ -62,6 +62,45 @@ class Patient:
 
             return np.array(images)
 
+    # This method, similar to the previous, will take in the path
+    # to the folder containing all the the subfolders named with
+    # the patient-ID: Lung1-xxx, and return the array segmentations
+    # associated with this patient. Since the segmentations are contained
+    # in a struct in a single .dcm file, the extraction of the array will
+    # be a little different
+    def return_segmentation_array(self, path):
+        # Changing directory to the folder contatining patient
+        # subfolders
+        os.chdir(path)
+        # Managing if the user has provided a faulty or wrong path
+        try:
+            # Entering the directory with the name of the patient
+            os.chdir(str(self.patientID))
+            # If no file is found with the patientID in the provided
+            # path an error is returned to the user, and the process
+            # is terminated
+        except FileNotFoundError as e:
+            print(f"\nError: The specified path is not a directory containing"
+                  f" the expected patient-ID: {self.patientID}")
+        else:
+            # Entering the top folder in this directory
+            os.chdir(os.listdir(os.getcwd())[0])
+            # Now the directory containg the .dcm file with the
+            # segmentations, is the bottom one,
+            os.chdir(os.listdir(os.getcwd())[-1])
+            # There is only a single file in this directory
+            filename = os.listdir(os.getcwd())[0]
+            dataset = dicom.dcmread(filename)
+            # The pixel array contains segmentations of the GTV, both
+            # lungs and the spinal cord, as separate arrays for each
+            # image slice of the patient, with the first quarter of
+            # the array being the segmentations of the GTV
+            segmentation_array = dataset.pixel_array
+            quarter_size = int(np.shape(segmentation_array)[0]/4)
+            GTV_segmentation = segmentation_array[0:quarter_size, :, :]
+
+            return GTV_segmentation
+
     def __str__(self):
         return f"{self.patientID}"
 
@@ -284,8 +323,25 @@ if __name__ == '__main__':
     group.add_patient(patient3)
 
     array1 = patient1.return_image_array("C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics")
-    print(np.shape(array1))
+    array2 = patient2.return_image_array("C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics")
+    print("Image array has shape: ", np.shape(array1))
+
+    segmentation1 = patient1.return_segmentation_array(
+        "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+    )
+
+    segmentation2 = patient2.return_segmentation_array(
+        "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+    )
+
+    print("Segmentation array has shape: ", np.shape(segmentation1))
+
+    index = 80
 
     plt.gray()
-    plt.imshow(array1[6, :, :])
+    plt.subplot(1, 3, 1), plt.imshow(segmentation1[index, :, :])
+    plt.subplot(1, 3, 2), plt.imshow(array1[index, :, :])
+    plt.subplot(1, 3, 3), plt.imshow(
+        np.multiply(segmentation1[index, :, :], array1[index, :, :])
+    )
     plt.show()
