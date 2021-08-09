@@ -12,6 +12,9 @@ if __name__ == '__main__':
     N = Lung1_group.relative_frequency_Nstages()
     TNM = Lung1_group.relative_frequency_TNM()
 
+    print("Males: ", Lung1_group.relative_frequency_males())
+    print("Females: ", Lung1_group.relative_frequency_females())
+
     print("Mean age", Lung1_group.mean_age())
     print("Age range", Lung1_group.age_range())
 
@@ -36,6 +39,3 @@ if __name__ == '__main__':
     print("\n")
 
     print(TNM, sum(TNM))
-
-    print("Males: ", Lung1_group.relative_frequency_males())
-    print("Females: ", Lung1_group.relative_frequency_females())
