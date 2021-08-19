@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pydicom as dicom
 import re
+
 from slice_viewer import IndexTracker
-import matplotlib
 
 
 # The methods to assign dicoms to patients makes assumption on the file
@@ -92,13 +92,12 @@ class Patient:
                 # If a directory contains the string, we choose it
                 if re.search("Segmentation", dirname):
                     os.chdir(os.path.join(os.getcwd(), dirname))
-            # Perhaps add some handling her for if file not found
+            # Perhaps add some handling here for if file not found
 
             # In this directory there is a single.dcm file containg
             # all the segmentations for the patient
             filename = os.listdir(os.getcwd())[0]
             dataset = dicom.dcmread(filename)
-            self.patientID = "LUNG1-002"
             # Check that the dataset is marked with the correct patientID:
             if dataset["PatientID"].value == self.patientID:
                 pass
@@ -116,14 +115,28 @@ class Patient:
 
             # The array containing all segmentations in order:
             total_array = dataset.pixel_array
-            
+            length, rows, cols = np.shape(total_array)
 
-            return(segmentation_dict), np.shape(total_array)
+            # The array is split into equal sections, each section being the number of
+            # images in the total segmentation array divided by the number of segmentations
+            split_array = total_array.reshape(len(segmentation_dict), -1, rows, cols)
 
+            for keyword in segmentation_dict:
+                # The segmentations are added to the segmentation_dict in the order they
+                # appear in the dict
+                index = list(segmentation_dict.keys()).index(keyword)
+                segmentation_dict[keyword] = split_array[index, :, :, :]
 
+            return segmentation_dict
 
+    # A method for returning only the GTV segmentation for when radiomics will be computed
+    def return_GTV_segmentation(self, path):
+        pass
 
-
+    # A method that will take the patient CT-images and apply outlines of the segmentations to
+    # the images, returning an array of the same size to the user
+    def visualize_segmentations(self, path):
+        pass
 
 
     def __str__(self):
@@ -204,12 +217,6 @@ class StudyGroup:
             self.patients.append(patient)
         # Closing the file after all patients are addded
         file.close()
-
-    # Method will take in path to directory containg all the folders with the name
-    # of the form Lung1-xxx and using the assign_dicom_files from the Patient class
-    # will assign the associated file to each patient in the group
-    def assign_dicoms_to_patients(self, path):
-        pass
 
     def mean_age(self):
         result = 0
@@ -348,15 +355,19 @@ if __name__ == '__main__':
     Lung1_group.add_patients_from_file(csv_path)
 
     patient = Lung1_group[1]
-    print(patient.return_segmentations(dicom_path))
+
+    segmentations = patient.return_segmentations(dicom_path)
+    gtv = segmentations["GTV-1"]
 
     plt.gray()
+    plt.imshow(gtv[44, :, :])
+    plt.show()
+
 
     # Slice viewer:
-    #fig, ax = plt.subplots(1, 1)
+    fig, ax = plt.subplots(1, 1)
     # Second argument of IndexTracker() is the array we want to
     # examine
-    #tracker = IndexTracker(ax, array1)
-    #fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-
-    #plt.show()
+    tracker = IndexTracker(ax, gtv)
+    fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+    plt.show()
