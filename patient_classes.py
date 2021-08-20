@@ -141,31 +141,40 @@ class Patient:
     def view_segmentations(self, path):
 
         segmentations = self.return_segmentations(path)
-        ct_images = self.return_image_array(path)
-        output_images = []
+        # For some reason the relative order of the two image arrays are reversed,
+        # so one is flipped to account for this
+        ct_images = np.flipud(self.return_image_array(path))
+        slices, rows, cols = np.shape(ct_images)
+
+        ct_rgb_images = []
+
+        for image in ct_images:
+            image = cv2.normalize(
+                image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
+            )
+            image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
+            ct_rgb_images.append(image)
+
+        ct_rgb_images = np.array(ct_rgb_images)
 
         for volume in segmentations:
             # segmentations[volume] will be the array of segmentation images of the specific organ
             bw_array = segmentations[volume]
+
+            rgb = [np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)]
+
             # Looping through all the images in the array
             for i in range(len(bw_array)):
                 bw_image = bw_array[i, :, :]
-                image = ct_images[i, :, :]
-
-                # The ct-image must be normalized to uint8 to be converted to rgb
-                image = cv2.normalize(
-                    image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
-                )
-                # Converting the ct-image to rgb, allowing to show colored contours on the image
-                image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+                image = ct_rgb_images[i, :, :, :]
 
                 # Finding the contours on the binary image:
                 contours, _ = cv2.findContours(bw_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
                 # The contours are drawn on the correspond ct image in the ct_images array:
-                contoured_image = cv2.drawContours(image, contours, -1, [0, 255, 0], 2)
-                output_images.append(contoured_image)
+                ct_rgb_images[i, :, :, :] = cv2.drawContours(image, contours, -1, rgb, 2)
 
-        return np.array(output_images)
+        return ct_rgb_images
 
 
 
@@ -421,7 +430,7 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    patient = Lung1_group[1]
+    patient = Lung1_group[111]
 
     segmentations = patient.return_segmentations(dicom_path)
     gtv = segmentations["GTV-1"]
