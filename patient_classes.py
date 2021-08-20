@@ -1,8 +1,11 @@
 import os
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import numpy as np
 import pydicom as dicom
 import re
+import cv2
+from skimage import exposure
 
 from slice_viewer import IndexTracker
 
@@ -135,8 +138,72 @@ class Patient:
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
     # the images, returning an array of the same size to the user
-    def visualize_segmentations(self, path):
-        pass
+    def view_segmentations(self, path):
+
+        segmentations = self.return_segmentations(path)
+        ct_images = self.return_image_array(path)
+        output_images = []
+
+        for volume in segmentations:
+            # segmentations[volume] will be the array of segmentation images of the specific organ
+            bw_array = segmentations[volume]
+            # Looping through all the images in the array
+            for i in range(len(bw_array)):
+                bw_image = bw_array[i, :, :]
+                image = ct_images[i, :, :]
+
+                # The ct-image must be normalized to uint8 to be converted to rgb
+                image = cv2.normalize(
+                    image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
+                )
+                # Converting the ct-image to rgb, allowing to show colored contours on the image
+                image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+
+                # Finding the contours on the binary image:
+                contours, _ = cv2.findContours(bw_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+                # The contours are drawn on the correspond ct image in the ct_images array:
+                contoured_image = cv2.drawContours(image, contours, -1, [0, 255, 0], 2)
+                output_images.append(contoured_image)
+
+        return np.array(output_images)
+
+
+
+
+
+
+
+
+
+        '''
+        lungleft = segmentations["Lung-Left"]
+
+        ct = images[55, :, :]
+        image = lungleft[55, :, :]
+
+        ct = cv2.normalize(ct, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
+
+        ct = cv2.cvtColor(ct, cv2.COLOR_GRAY2RGB)
+
+        contours, hierarchy = cv2.findContours(image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(ct, contours, -1, (255, 0, 0), 2)
+
+
+        plt.imshow(ct)
+        plt.show()
+
+        '''
+
+
+        '''
+        contours = np.array(contours)
+        fig, ax = plt.subplots()
+        ax.imshow(ct, cmap="gray")
+        ax.plot(contours[0, :, :, 0], contours[0, :, :, 1], color="orange", lw=2)
+
+        plt.show()
+        '''
+
 
 
     def __str__(self):
@@ -359,15 +426,20 @@ if __name__ == '__main__':
     segmentations = patient.return_segmentations(dicom_path)
     gtv = segmentations["GTV-1"]
 
-    plt.gray()
-    plt.imshow(gtv[44, :, :])
-    plt.show()
+
+    a = patient.view_segmentations(dicom_path)
+
+
+
+    #plt.imshow(gtv[44, :, :])
+    #plt.show()
 
 
     # Slice viewer:
     fig, ax = plt.subplots(1, 1)
     # Second argument of IndexTracker() is the array we want to
     # examine
-    tracker = IndexTracker(ax, gtv)
+    tracker = IndexTracker(ax, a)
     fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
     plt.show()
+
