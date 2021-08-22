@@ -1,11 +1,9 @@
 import os
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import numpy as np
 import pydicom as dicom
 import re
 import cv2
-from skimage import exposure
 
 from slice_viewer import IndexTracker
 
@@ -144,76 +142,50 @@ class Patient:
         # For some reason the relative order of the two image arrays are reversed,
         # so one is flipped to account for this
         ct_images = np.flipud(self.return_image_array(path))
-        slices, rows, cols = np.shape(ct_images)
 
+        # The array that will be returned to the user
         ct_rgb_images = []
-
+        # Looping through the ct-slices of the patient
         for image in ct_images:
+            # Each image is uint8 normalized in order to be converted to rgb
             image = cv2.normalize(
                 image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
             )
+            # Each image is converted into rgb such that coloured contours can be displayed
+            # on them
             image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-
+            # The image is appended to the array that will be returned to the user, creating
+            # the same ct-array as earlier only that the images are in rgb
             ct_rgb_images.append(image)
-
+        # converting rgb ct-list into numpy array
         ct_rgb_images = np.array(ct_rgb_images)
 
+        # Looping through each organ volume segmentation in the segmentation dict
         for volume in segmentations:
-            # segmentations[volume] will be the array of segmentation images of the specific organ
+            # segmentations[volume] will be the array of segmentation images of the specific organ,
+            # and is a binary image which we easily can find the contour of
             bw_array = segmentations[volume]
-
+            # Creating a random rgb colour which will colour the contour of this volume segmentation
             rgb = [np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)]
 
-            # Looping through all the images in the array
+            # Looping through all the images in the segmentation array
             for i in range(len(bw_array)):
+                # Picking an image in the segmentation array, and the corresponding ct-image
                 bw_image = bw_array[i, :, :]
                 image = ct_rgb_images[i, :, :, :]
-
                 # Finding the contours on the binary image:
                 contours, _ = cv2.findContours(bw_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-                # The contours are drawn on the correspond ct image in the ct_images array:
+                # The contours are drawn on the corresponding ct image, and the change is made to the
+                # rgb-array
                 ct_rgb_images[i, :, :, :] = cv2.drawContours(image, contours, -1, rgb, 2)
-
-        return ct_rgb_images
-
-
-
-
-
-
-
-
-
-        '''
-        lungleft = segmentations["Lung-Left"]
-
-        ct = images[55, :, :]
-        image = lungleft[55, :, :]
-
-        ct = cv2.normalize(ct, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-
-        ct = cv2.cvtColor(ct, cv2.COLOR_GRAY2RGB)
-
-        contours, hierarchy = cv2.findContours(image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        cv2.drawContours(ct, contours, -1, (255, 0, 0), 2)
-
-
-        plt.imshow(ct)
+        # Viewing the result in the slice-viewer:
+        # Slice viewer:
+        fig, ax = plt.subplots(1, 1)
+        # Second argument of IndexTracker() is the array we want to
+        # examine
+        tracker = IndexTracker(ax, ct_rgb_images)
+        fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
         plt.show()
-
-        '''
-
-
-        '''
-        contours = np.array(contours)
-        fig, ax = plt.subplots()
-        ax.imshow(ct, cmap="gray")
-        ax.plot(contours[0, :, :, 0], contours[0, :, :, 1], color="orange", lw=2)
-
-        plt.show()
-        '''
-
-
 
     def __str__(self):
         return f"{self.patientID}"
@@ -430,20 +402,18 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    patient = Lung1_group[111]
+    patient = Lung1_group[0]
 
     segmentations = patient.return_segmentations(dicom_path)
     gtv = segmentations["GTV-1"]
 
-
-    a = patient.view_segmentations(dicom_path)
-
-
+    patient.view_segmentations(dicom_path)
 
     #plt.imshow(gtv[44, :, :])
     #plt.show()
 
-
+    '''
+    
     # Slice viewer:
     fig, ax = plt.subplots(1, 1)
     # Second argument of IndexTracker() is the array we want to
@@ -451,4 +421,4 @@ if __name__ == '__main__':
     tracker = IndexTracker(ax, a)
     fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
     plt.show()
-
+    '''
