@@ -402,15 +402,9 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    patient = Lung1_group[0]
-
-    segmentations = patient.return_segmentations(dicom_path)
-    gtv = segmentations["GTV-1"]
+    patient = Lung1_group[231]
 
     patient.view_segmentations(dicom_path)
-
-    #plt.imshow(gtv[44, :, :])
-    #plt.show()
 
     '''
     
