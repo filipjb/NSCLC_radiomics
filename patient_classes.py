@@ -131,8 +131,28 @@ class Patient:
             return segmentation_dict
 
     # A method for returning only the GTV segmentation for when radiomics will be computed
-    def return_GTV_segmentation(self, path):
-        pass
+    # It will return several segmentations in a dict if there are more segmentations marked
+    # with the phrase "GTV"
+    def return_GTV_segmentations(self, path):
+        # Dict that will be returned to the user
+        gtv_dict = {}
+        # Fetch segmentations from the more general method
+        segmentations = self.return_segmentations(path)
+        print(f"Fetching GTV segmentations of patient: {self.patientID}")
+        # Loop through the segmented volumes
+        for volume in segmentations:
+            # And picking out volumes tagged with "GTV"
+            match = re.search("GTV", volume)
+            if match:
+                print(f"Found the following matches for GTV: {volume}\n")
+                gtv_dict.update({volume: segmentations[volume]})
+        # In case there is no GTV segmentations of the patient:
+        if gtv_dict == {}:
+            print(f"Error: Found no segmentations of patient {self.patientID}"
+                  f" tagged with 'GTV'\n")
+            quit()
+
+        return gtv_dict
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
     # the images, returning an array of the same size to the user
@@ -402,12 +422,14 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    patient = Lung1_group[231]
+    patient = Lung1_group[2]
 
-    patient.view_segmentations(dicom_path)
+    gtv = patient.return_GTV_segmentations(dicom_path)
+    a = gtv["GTV-1"]
+
 
     '''
-    
+    plt.gray()
     # Slice viewer:
     fig, ax = plt.subplots(1, 1)
     # Second argument of IndexTracker() is the array we want to
