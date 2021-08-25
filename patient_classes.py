@@ -2,7 +2,10 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pydicom as dicom
-import matplotlib
+import re
+import cv2
+
+from slice_viewer import IndexTracker
 
 
 # The methods to assign dicoms to patients makes assumption on the file
@@ -64,11 +67,9 @@ class Patient:
 
     # This method, similar to the previous, will take in the path
     # to the folder containing all the the subfolders named with
-    # the patient-ID: Lung1-xxx, and return the array segmentations
-    # associated with this patient. Since the segmentations are contained
-    # in a struct in a single .dcm file, the extraction of the array will
-    # be a little different
-    def return_segmentation_array(self, path):
+    # the patient-ID: Lung1-xxx, and return as struct containing all
+    # the segmentations that are associated with the patient
+    def return_segmentations(self, path):
         # Changing directory to the folder contatining patient
         # subfolders
         os.chdir(path)
@@ -85,21 +86,126 @@ class Patient:
         else:
             # Entering the top folder in this directory
             os.chdir(os.listdir(os.getcwd())[0])
-            # Now the directory containg the .dcm file with the
-            # segmentations, is the bottom one,
-            os.chdir(os.listdir(os.getcwd())[-1])
-            # There is only a single file in this directory
+            # Now the directory containing the .dcm file with the
+            # segmentations, contains the string "Segmentation", so
+            # we lopp throught the directory names in cwd:
+            for dirname in os.listdir(os.getcwd()):
+                # If a directory contains the string, we choose it
+                if re.search("Segmentation", dirname):
+                    os.chdir(os.path.join(os.getcwd(), dirname))
+            # Perhaps add some handling here for if file not found
+
+            # In this directory there is a single.dcm file containg
+            # all the segmentations for the patient
             filename = os.listdir(os.getcwd())[0]
             dataset = dicom.dcmread(filename)
-            # The pixel array contains segmentations of the GTV, both
-            # lungs and the spinal cord, as separate arrays for each
-            # image slice of the patient, with the first quarter of
-            # the array being the segmentations of the GTV
-            segmentation_array = dataset.pixel_array
-            quarter_size = int(np.shape(segmentation_array)[0]/4)
-            GTV_segmentation = segmentation_array[0:quarter_size, :, :]
+            # Check that the dataset is marked with the correct patientID:
+            if dataset["PatientID"].value == self.patientID:
+                pass
+            else:
+                print(f"Error: Patient object ID ({self.patientID}), does "
+                      f"not correspond with the patient ID in the provided"
+                      f"dataset ({dataset['PatientID'].value})")
+                quit()
 
-            return GTV_segmentation
+            # Constructing a dict that will contain the tags for the organs that
+            # are segmented, together with their respective image matrices:
+            segmentation_dict = {}
+            for entry in dataset["SegmentSequence"]:
+                segmentation_dict.update({entry["SegmentDescription"].value: None})
+
+            # The array containing all segmentations in order:
+            total_array = dataset.pixel_array
+            length, rows, cols = np.shape(total_array)
+
+            # The array is split into equal sections, each section being the number of
+            # images in the total segmentation array divided by the number of segmentations
+            split_array = total_array.reshape(len(segmentation_dict), -1, rows, cols)
+
+            for keyword in segmentation_dict:
+                # The segmentations are added to the segmentation_dict in the order they
+                # appear in the dict
+                index = list(segmentation_dict.keys()).index(keyword)
+                segmentation_dict[keyword] = split_array[index, :, :, :]
+
+            return segmentation_dict
+
+    # A method for returning only the GTV segmentation for when radiomics will be computed
+    # It will return several segmentations in a dict if there are more segmentations marked
+    # with the phrase "GTV"
+    def return_GTV_segmentations(self, path):
+        # Dict that will be returned to the user
+        gtv_dict = {}
+        # Fetch segmentations from the more general method
+        segmentations = self.return_segmentations(path)
+        print(f"Fetching GTV segmentations of patient: {self.patientID}")
+        # Loop through the segmented volumes
+        for volume in segmentations:
+            # And picking out volumes tagged with "GTV"
+            match = re.search("GTV", volume)
+            if match:
+                print(f"Found the following matches for GTV: {volume}\n")
+                gtv_dict.update({volume: segmentations[volume]})
+        # In case there is no GTV segmentations of the patient:
+        if gtv_dict == {}:
+            print(f"Error: Found no segmentations of patient {self.patientID}"
+                  f" tagged with 'GTV'\n")
+            quit()
+
+        return gtv_dict
+
+    # A method that will take the patient CT-images and apply outlines of the segmentations to
+    # the images, returning an array of the same size to the user
+    def view_segmentations(self, path):
+
+        segmentations = self.return_segmentations(path)
+        # For some reason the relative order of the two image arrays are reversed,
+        # so one is flipped to account for this
+        ct_images = np.flipud(self.return_image_array(path))
+
+        # The array that will be returned to the user
+        ct_rgb_images = []
+        # Looping through the ct-slices of the patient
+        for image in ct_images:
+            # Each image is uint8 normalized in order to be converted to rgb
+            image = cv2.normalize(
+                image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
+            )
+            # Each image is converted into rgb such that coloured contours can be displayed
+            # on them
+            image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+            # The image is appended to the array that will be returned to the user, creating
+            # the same ct-array as earlier only that the images are in rgb
+            ct_rgb_images.append(image)
+        # converting rgb ct-list into numpy array
+        ct_rgb_images = np.array(ct_rgb_images)
+
+        # Looping through each organ volume segmentation in the segmentation dict
+        for volume in segmentations:
+            # segmentations[volume] will be the array of segmentation images of the specific organ,
+            # and is a binary image which we easily can find the contour of
+            bw_array = segmentations[volume]
+            # Creating a random rgb colour which will colour the contour of this volume segmentation
+            rgb = [np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)]
+
+            # Looping through all the images in the segmentation array
+            for i in range(len(bw_array)):
+                # Picking an image in the segmentation array, and the corresponding ct-image
+                bw_image = bw_array[i, :, :]
+                image = ct_rgb_images[i, :, :, :]
+                # Finding the contours on the binary image:
+                contours, _ = cv2.findContours(bw_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+                # The contours are drawn on the corresponding ct image, and the change is made to the
+                # rgb-array
+                ct_rgb_images[i, :, :, :] = cv2.drawContours(image, contours, -1, rgb, 2)
+        # Viewing the result in the slice-viewer:
+        # Slice viewer:
+        fig, ax = plt.subplots(1, 1)
+        # Second argument of IndexTracker() is the array we want to
+        # examine
+        tracker = IndexTracker(ax, ct_rgb_images)
+        fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+        plt.show()
 
     def __str__(self):
         return f"{self.patientID}"
@@ -115,6 +221,9 @@ class StudyGroup:
         for patient in self.patients:
             result += str(patient) + "\n"
         return result
+
+    def __getitem__(self, item):
+        return self.patients[item]
 
     # Method for adding a single patient into the group
     def add_patient(self, new_patient):
@@ -176,12 +285,6 @@ class StudyGroup:
             self.patients.append(patient)
         # Closing the file after all patients are addded
         file.close()
-
-    # Method will take in path to directory containg all the folders with the name
-    # of the form Lung1-xxx and using the assign_dicom_files from the Patient class
-    # will assign the associated file to each patient in the group
-    def assign_dicoms_to_patients(self, path):
-        pass
 
     def mean_age(self):
         result = 0
@@ -313,35 +416,25 @@ class StudyGroup:
 
 if __name__ == '__main__':
 
-    patient1 = Patient("LUNG1-001", 78.7515, 2, 3, 0, "IIIb", "large cell", "male", 2165, 1)
-    patient2 = Patient("LUNG1-002", 83.8001, 2, 0, 0, "I", "squamous cell carcinoma", "male", 155, 1)
-    patient3 = Patient("LUNG1-003", 68.1807, 2, 3, 0, "IIIb", "large cell", "male", 256, 1)
+    dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+    csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
-    group = StudyGroup()
-    group.add_patient(patient1)
-    group.add_patient(patient2)
-    group.add_patient(patient3)
+    Lung1_group = StudyGroup()
+    Lung1_group.add_patients_from_file(csv_path)
 
-    array1 = patient1.return_image_array("C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics")
-    array2 = patient2.return_image_array("C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics")
-    print("Image array has shape: ", np.shape(array1))
+    patient = Lung1_group[2]
 
-    segmentation1 = patient1.return_segmentation_array(
-        "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
-    )
+    gtv = patient.return_GTV_segmentations(dicom_path)
+    a = gtv["GTV-1"]
 
-    segmentation2 = patient2.return_segmentation_array(
-        "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
-    )
 
-    print("Segmentation array has shape: ", np.shape(segmentation1))
-
-    index = 80
-
+    '''
     plt.gray()
-    plt.subplot(1, 3, 1), plt.imshow(segmentation1[index, :, :])
-    plt.subplot(1, 3, 2), plt.imshow(array1[index, :, :])
-    plt.subplot(1, 3, 3), plt.imshow(
-        np.multiply(segmentation1[index, :, :], array1[index, :, :])
-    )
+    # Slice viewer:
+    fig, ax = plt.subplots(1, 1)
+    # Second argument of IndexTracker() is the array we want to
+    # examine
+    tracker = IndexTracker(ax, a)
+    fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
     plt.show()
+    '''

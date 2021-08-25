@@ -1,4 +1,4 @@
-from patient_classes import *
+from patient_classes import Patient, StudyGroup
 from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
@@ -12,6 +12,9 @@ if __name__ == '__main__':
     N = Lung1_group.relative_frequency_Nstages()
     TNM = Lung1_group.relative_frequency_TNM()
 
+    '''
+    Patient statistics:
+    
     print("Males: ", Lung1_group.relative_frequency_males())
     print("Females: ", Lung1_group.relative_frequency_females())
 
@@ -39,3 +42,10 @@ if __name__ == '__main__':
     print("\n")
 
     print(TNM, sum(TNM))
+
+    '''
+
+    path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+
+    print(Lung1_group[55].return_segmentations(path))
+
