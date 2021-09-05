@@ -443,25 +443,9 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    '''
-    patient = Lung1_group[193]
-    print(patient.patientID)
-    print(
-        np.shape(patient.return_image_array(dicom_path)),
-        np.shape(patient.return_segmentations(dicom_path)["GTV-1"])
-    )
-    '''
+    patient = Lung1_group[0]
 
-    for patient in Lung1_group[303:]:
-        print(f"\nViewing patient {patient}, with the delineated volumes:"
-              f" {patient.return_segmentations(dicom_path).keys()}")
-
-        patient.view_segmentations(dicom_path)
-
-    # Lung1-305
-
-
-
-
-
+    print(f"# of slices: {len(patient.return_image_array(dicom_path))}")
+    print(f"# of segmentations: {len(patient.return_segmentations(dicom_path)['GTV-1'])}")
+    patient.view_segmentations(dicom_path)
 
