@@ -27,6 +27,7 @@ class Patient:
         self.histology = histology
         self.gender = gender
         self.survival_time = survival_time
+        # Survival time is measured in days from the start of treatment
         self.deadstatus = deadstatus
         self.dicoms = []
 
@@ -205,6 +206,12 @@ class Patient:
         # examine
         tracker = IndexTracker(ax, ct_rgb_images)
         fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+        # Setting patientID as the window title of pyplot
+        fig.canvas.set_window_title(self.patientID)
+        # Making the window maximized when the viewer is opened
+        mngr = plt.get_current_fig_manager()
+        mngr.resize(1000, 1000)
+
         plt.show()
 
     def __str__(self):
@@ -416,25 +423,25 @@ class StudyGroup:
 
 if __name__ == '__main__':
 
+    def slice_viewer(array):
+        plt.gray()
+        # Slice viewer:
+        fig, ax = plt.subplots(1, 1)
+        # Second argument of IndexTracker() is the array we want to
+        # examine
+        tracker = IndexTracker(ax, array)
+        fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+        # Setting patientID as the window title of pyplot
+        fig.canvas.set_window_title(patient.patientID)
+
+        plt.show()
+
+
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    patient = Lung1_group[2]
+    patient = Lung1_group[94]
 
-    gtv = patient.return_GTV_segmentations(dicom_path)
-    a = gtv["GTV-1"]
-
-
-    '''
-    plt.gray()
-    # Slice viewer:
-    fig, ax = plt.subplots(1, 1)
-    # Second argument of IndexTracker() is the array we want to
-    # examine
-    tracker = IndexTracker(ax, a)
-    fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-    plt.show()
-    '''
