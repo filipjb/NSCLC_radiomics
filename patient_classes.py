@@ -31,10 +31,10 @@ class Patient:
         self.deadstatus = deadstatus
         self.dicoms = []
 
-    # This method will take in the path to the folder containing
-    # all the the subfolders named with the patient-ID: Lung1-xxx,
-    # and return the image correct image array of the patient, using
-    # self.patientID to find the correct directory and image array
+    # This method will take in the path to the folder containing all the the subfolders named
+    # with the patient-ID: Lung1-xxx, and return the correct image array of the patient, using
+    # self.patientID to find the correct directory and image array, as well as sorting the images
+    # to be in the correct order accordin to slice position given in the dcm file
     def return_image_array(self, path):
         # Changing directory to the folder contatining patient
         # subfolders
@@ -55,16 +55,24 @@ class Patient:
             # Again entering the top folder inside this directory, which contains
             # all the dicom files for the patient
             os.chdir(os.listdir(os.getcwd())[0])
-            images = []
+            images_dict = {}
+            sorted_images = []
             # Looping through and reading the .dcm files in the folder
             for filename in os.listdir(os.getcwd()):
                 dataset = dicom.dcmread(filename)
-                # Exctracting the image array from the dicom dataset
+                # The location of the image slice is given by SliceLocation
+                location = dataset.SliceLocation
+                # Exctracting the image array from the dicom dataset and adding them to the dict
+                # together with their slice location
                 image_array = dataset.pixel_array
-                # And appending it to the total array of all images of the patient
-                images.append(image_array)
+                images_dict.update({location: image_array})
 
-            return np.array(images)
+            # Sorting the dictionary by the numerical value of the keys, i.e. slice positions
+            sort = {k: v for k, v in sorted(images_dict.items(), key=lambda item: -item[0])}
+            # The numpy array that will be returned to the user
+            final_array = np.array(list(sort.values()))
+
+            return final_array
 
     # This method, similar to the previous, will take in the path
     # to the folder containing all the the subfolders named with
@@ -157,12 +165,15 @@ class Patient:
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
     # the images, returning an array of the same size to the user
-    def view_segmentations(self, path):
+    def view_segmentations(self, path, window_width=550, window_height=550):
 
         segmentations = self.return_segmentations(path)
         # For some reason the relative order of the two image arrays are reversed,
         # so one is flipped to account for this
         ct_images = np.flipud(self.return_image_array(path))
+
+        print(f"Showing segmentations of patient {self.patientID}")
+        print(f"Segmented volumes are: {list(segmentations.keys())}")
 
         # The array that will be returned to the user
         ct_rgb_images = []
@@ -210,7 +221,7 @@ class Patient:
         fig.canvas.set_window_title(self.patientID)
         # Making the window maximized when the viewer is opened
         mngr = plt.get_current_fig_manager()
-        mngr.resize(1000, 1000)
+        mngr.resize(window_width, window_height)
 
         plt.show()
 
@@ -443,5 +454,7 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
 
-    patient = Lung1_group[94]
+    patient = Lung1_group[30]
+
+    patient.view_segmentations(dicom_path)
 
