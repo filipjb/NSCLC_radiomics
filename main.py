@@ -41,11 +41,8 @@ def print_patient_statistics(group):
 if __name__ == '__main__':
 
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
+    lung1_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
 
     lung1 = StudyGroup()
     lung1.add_patients_from_file(csv_path)
-
-    print_patient_statistics(lung1)
-
-    lung1_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
 
