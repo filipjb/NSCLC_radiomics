@@ -444,7 +444,7 @@ if __name__ == '__main__':
         fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
         # Setting patientID as the window title of pyplot
         fig.canvas.set_window_title(patient.patientID)
-
+        
         plt.show()
 
 
@@ -453,8 +453,3 @@ if __name__ == '__main__':
 
     Lung1_group = StudyGroup()
     Lung1_group.add_patients_from_file(csv_path)
-
-    patient = Lung1_group[30]
-
-    patient.view_segmentations(dicom_path)
-
