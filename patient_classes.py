@@ -31,6 +31,9 @@ class Patient:
         self.deadstatus = deadstatus
         self.dicoms = []
 
+    def __repr__(self):
+        return str(self.patientID)
+
     # This method will take in the path to the folder containing all the the subfolders named
     # with the patient-ID: Lung1-xxx, and return the correct image array of the patient, using
     # self.patientID to find the correct directory and image array, as well as sorting the images
@@ -246,6 +249,12 @@ class StudyGroup:
     # Method for adding a single patient into the group
     def add_patient(self, new_patient):
         self.patients.append(new_patient)
+
+    # Takes in patientID as a string and removes the patient from the group
+    def remove_patient(self, patientid):
+        for patient in self.patients:
+            if patient.patientID == patientid:
+                self.patients.remove(patient)
 
     # Objective of this method is to take in the path to a .csv
     # file containing all patient data and the adding all the

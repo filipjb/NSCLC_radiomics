@@ -46,3 +46,4 @@ if __name__ == '__main__':
     lung1 = StudyGroup()
     lung1.add_patients_from_file(csv_path)
 
+    
