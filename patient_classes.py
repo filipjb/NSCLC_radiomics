@@ -442,8 +442,6 @@ if __name__ == '__main__':
         # examine
         tracker = IndexTracker(ax, array)
         fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-        # Setting patientID as the window title of pyplot
-        fig.canvas.set_window_title(patient.patientID)
         
         plt.show()
 
