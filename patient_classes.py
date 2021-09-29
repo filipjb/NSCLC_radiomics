@@ -256,10 +256,54 @@ class StudyGroup:
             if patient.patientID == patientid:
                 self.patients.remove(patient)
 
+    @staticmethod
+    # A private function made for writing the two methods for adding either all patients or
+    # some specific patients a little more compact
+    # it takes in a line that is read from a csv file (will be a list) and returns the values
+    # such that they can be used to create a patient object
+    def __return_clinical_values(read_line):
+        if read_line[1] == "NA":
+            age = "NA"
+        else:
+            age = float(read_line[1])
+
+        if read_line[2] == "NA":
+            t_stage = "NA"
+        else:
+            t_stage = int(read_line[2])
+
+        if read_line[3] == "NA":
+            n_stage = "NA"
+        else:
+            n_stage = int(read_line[3])
+
+        if read_line[4] == "NA":
+            m_stage = "NA"
+        else:
+            m_stage = int(read_line[4])
+
+        overall_stage = str(read_line[5])
+
+        histology = str(read_line[6])
+
+        gender = str(read_line[7])
+
+        if read_line[8] == "NA":
+            survival_time = "NA"
+        else:
+            survival_time = int(read_line[8])
+
+        if read_line[9] == "NA":
+            deadstatus = "NA"
+        else:
+            deadstatus = int(read_line[9])
+
+        return age, t_stage, n_stage, m_stage, overall_stage, histology, gender, survival_time, deadstatus
+
     # Objective of this method is to take in the path to a .csv
     # file containing all patient data and the adding all the
     # data as patient objects into the group
-    def add_patients_from_file(self, path):
+    def add_all_patients(self, path):
         file = open(path, "r")
         # [1:] to skip the first line in the file, which contains the header
         for line in file.readlines()[1:]:
@@ -268,49 +312,24 @@ class StudyGroup:
             # some lines containing "NA":
             patient_id = str(line[0])
 
-            if line[1] == "NA":
-                age = "NA"
-            else:
-                age = float(line[1])
-
-            if line[2] == "NA":
-                t_stage = "NA"
-            else:
-                t_stage = int(line[2])
-
-            if line[3] == "NA":
-                n_stage = "NA"
-            else:
-                n_stage = int(line[3])
-
-            if line[4] == "NA":
-                m_stage = "NA"
-            else:
-                m_stage = int(line[4])
-
-            overall_stage = str(line[5])
-
-            histology = str(line[6])
-
-            gender = str(line[7])
-
-            if line[8] == "NA":
-                survival_time = "NA"
-            else:
-                survival_time = int(line[8])
-
-            if line[9] == "NA":
-                deadstatus = "NA"
-            else:
-                deadstatus = int(line[9])
-
-            # Creating a patient object from the data extracted from
-            # the current line
-            patient = Patient(patient_id, age, t_stage, n_stage, m_stage, overall_stage,
-                              histology, gender, survival_time, deadstatus)
-            # And adding the patient to the studygroup
+            age, t, n, m, o, hist, g, st, dead = self.__return_clinical_values(line)
+            patient = Patient(patient_id, age, t, n, m, o, hist, g, st, dead)
             self.patients.append(patient)
-        # Closing the file after all patients are addded
+        file.close()
+
+    # Adds specific patients to the studygroup based on a list of patientnames
+    def add_specific_patients(self, path, patientnames: list):
+        file = open(path, "r")
+        # [1:] to skip the first line in the file, which contains the header
+        for line in file.readlines()[1:]:
+            line = line.split(",")
+            # Extracting patient data from the line and accounting for
+            # some lines containing "NA":
+            patient_id = str(line[0])
+            if patient_id in patientnames:
+                age, t, n, m, o, hist, g, st, dead = self.__return_clinical_values(line)
+                patient = Patient(patient_id, age, t, n, m, o, hist, g, st, dead)
+                self.patients.append(patient)
         file.close()
 
     def mean_age(self):
@@ -442,7 +461,7 @@ class StudyGroup:
 
 
 if __name__ == '__main__':
-
+    # This block is for debugging
     def slice_viewer(array):
         plt.gray()
         # Slice viewer:
@@ -459,4 +478,4 @@ if __name__ == '__main__':
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
     Lung1_group = StudyGroup()
-    Lung1_group.add_patients_from_file(csv_path)
+    Lung1_group.add_all_patients(csv_path)
