@@ -46,9 +46,9 @@ class Patient:
         try:
             # Entering the directory with the name of the patient
             os.chdir(str(self.patientID))
-            # If no file is found with the patientID in the provided
-            # path an error is returned to the user, and the process
-            # is terminated
+        # If no file is found with the patientID in the provided
+        # path an error is returned to the user, and the process
+        # is terminated
         except FileNotFoundError as e:
             print(f"\nError: The specified path is not a directory containing"
                   f" the expected patient-ID: {self.patientID}")
@@ -145,26 +145,29 @@ class Patient:
     # A method for returning only the GTV segmentation for when radiomics will be computed
     # It will return several segmentations in a dict if there are more segmentations marked
     # with the phrase "GTV"
-    def return_GTV_segmentations(self, path):
+    def return_GTV_segmentations(self, path, return_dict=False):
         # Dict that will be returned to the user
         gtv_dict = {}
         # Fetch segmentations from the more general method
         segmentations = self.return_segmentations(path)
-        print(f"Fetching GTV segmentations of patient: {self.patientID}")
+        # print(f"Fetching GTV segmentations of patient: {self.patientID}")
         # Loop through the segmented volumes
         for volume in segmentations:
             # And picking out volumes tagged with "GTV"
             match = re.search("GTV", volume)
             if match:
-                print(f"Found the following matches for GTV: {volume}\n")
                 gtv_dict.update({volume: segmentations[volume]})
         # In case there is no GTV segmentations of the patient:
         if gtv_dict == {}:
             print(f"Error: Found no segmentations of patient {self.patientID}"
                   f" tagged with 'GTV'\n")
             quit()
-
-        return gtv_dict
+        if return_dict:
+            return gtv_dict
+        # Since all patients in Lung1 only have a singly gtv segmentation marked with GTV-1 we can (for now) return the
+        # segmentation as an array in this way
+        else:
+            return gtv_dict["GTV-1"]
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
     # the images, returning an array of the same size to the user
@@ -227,6 +230,15 @@ class Patient:
         mngr.resize(window_width, window_height)
 
         plt.show()
+
+    def save_feature_values(self, feature_dict):
+        pass
+
+
+
+
+
+
 
     def __str__(self):
         return f"{self.patientID}"
@@ -479,3 +491,8 @@ if __name__ == '__main__':
 
     Lung1_group = StudyGroup()
     Lung1_group.add_all_patients(csv_path)
+
+    patient1: Patient = Lung1_group.patients[0]
+
+    images1 = patient1.return_image_array(dicom_path)
+    masks1 = patient1.return_GTV_segmentations(dicom_path)

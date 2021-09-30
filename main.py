@@ -1,3 +1,4 @@
+
 from patient_classes import Patient, StudyGroup
 from matplotlib import pyplot as plt
 
@@ -61,10 +62,4 @@ if __name__ == '__main__':
     # their statistics
     excluded_lung1 = StudyGroup()
     excluded_lung1.add_specific_patients(csv_path, disq_patients)
-
-    print("Lung1 statistics:")
-    print_patient_statistics(lung1)
-    print("Lung1 excluded statistics:")
-    print_patient_statistics(excluded_lung1)
-
 
