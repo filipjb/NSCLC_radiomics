@@ -1,45 +1,39 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from patient_classes import Patient, StudyGroup
-import radiomics
 from radiomics import featureextractor, getTestCase, firstorder
 import SimpleITK as sitk
-import logging
 
 
-# A simple function for converting array and associated mask into sitkImage
-def convert_to_sitkImage(image_arr, mask_arr):
-    return sitk.GetImageFromArray(image_arr), sitk.GetImageFromArray(mask_arr)
-
-
-def calculate_firstorder_features(images, masks, featurelist=None):
-    # Get the PyRadiomics logger (default log-level = INFO)
-    logger = radiomics.logger
-    logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
-
-    # Set up the handler to write out all log entries to a file
-    handler = logging.FileHandler(filename='testLog.txt', mode='w')
-    formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-
-
-    # Placeholde settings and initialization for now
-    settings = {"binWidth": 25, "resampledPixelSpacing": None, "interpolator": sitk.sitkBSpline}
+def initiate_featureextractor(settings=dict):
     # Initializing the extractor
-    extractor = featureextractor.RadiomicsFeatureExtractor(**settings)
-    # Disabling all features and then enabling only first-order features
+    extractor = featureextractor.RadiomicsFeatureExtractor(settings)
+    # Disabling all features
     extractor.disableAllFeatures()
+    return extractor
+
+
+def calculate_firstorder_features(
+        patient,
+        filepath,
+        featurelist=None,
+        mute=True
+):
+    images = sitk.GetImageFromArray(patient.return_image_array(filepath))
+    masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
+
+    extractor = initiate_featureextractor()
+
     extractor.enableFeatureClassByName(featureClass="firstorder")
 
-    print("Calculating first-order features")
+    print(f"\nCalculating first-order features for patient {patient}")
     # The feature vector returned by execute is a collections.OrderedDict
-    featrue_vec = extractor.execute(images, masks)
+    feature_dict = extractor.execute(images, masks)
+    if not mute:
+        for featurename in feature_dict.keys():
+            print(f"Computed {featurename}: {feature_dict[featurename]}")
 
-    for featurename in featrue_vec.keys():
-        print(f"Computed {featurename}: {featrue_vec[featurename]}")
-
-    return featrue_vec
+    patient.firstorder_features = feature_dict
 
 
 if __name__ == '__main__':
@@ -54,3 +48,5 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     patient1 = lung1.patients[0]
 
+    calculate_firstorder_features(patient1, lung1_path)
+    print(patient1.firstorder_features)

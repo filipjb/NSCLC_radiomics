@@ -27,12 +27,48 @@ class Patient:
         self.histology = histology
         self.gender = gender
         self.survival_time = survival_time
-        # Survival time is measured in days from the start of treatment
+        # Survival time is measured in days, from the start of treatment
         self.deadstatus = deadstatus
-        self.dicoms = []
+        # Radiomic featurevalues calculated for the patient will be saed in each object
+        self.firstorder_features = None
+        self.shapebased_features = None
+        self.textural_features = None
+        self.wavelet_features = None
 
     def __repr__(self):
         return str(self.patientID)
+
+    @property
+    def firstorder_features(self):
+        return self.__firstorder_features
+
+    @property
+    def shapebased_features(self):
+        return self.__shapebased_features
+
+    @property
+    def textural_features(self):
+        return self.__textural_features
+
+    @property
+    def wavelet_features(self):
+        return self.__wavelet_features
+
+    @firstorder_features.setter
+    def firstorder_features(self, features):
+        self.__firstorder_features = features
+
+    @shapebased_features.setter
+    def shapebased_features(self, features):
+        self.__shapebased_features = features
+
+    @textural_features.setter
+    def textural_features(self, features):
+        self.__textural_features = features
+
+    @wavelet_features.setter
+    def wavelet_features(self, features):
+        self.__wavelet_features = features
 
     # This method will take in the path to the folder containing all the the subfolders named
     # with the patient-ID: Lung1-xxx, and return the correct image array of the patient, using
@@ -230,15 +266,6 @@ class Patient:
         mngr.resize(window_width, window_height)
 
         plt.show()
-
-    def save_feature_values(self, feature_dict):
-        pass
-
-
-
-
-
-
 
     def __str__(self):
         return f"{self.patientID}"
@@ -494,5 +521,4 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
-    images1 = patient1.return_image_array(dicom_path)
-    masks1 = patient1.return_GTV_segmentations(dicom_path)
+
