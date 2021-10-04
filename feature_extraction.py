@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import radiomics
 import logging
+import pandas as pd
 from patient_classes import Patient, StudyGroup
 from radiomics import featureextractor, getTestCase, firstorder
 import SimpleITK as sitk
@@ -52,20 +53,4 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     remove_disqualified_patients(lung1, disq_patients)
 
-    patient1: Patient = lung1.patients[91]
-    print(patient1)
-    print(np.shape(patient1.return_image_array(lung1_path)), np.shape(patient1.return_GTV_segmentations(lung1_path)))
-    #patient1.view_segmentations(lung1_path)
-
-
-    f = open("firstorder.data", "w")
-    for patient in lung1:
-        feature = calculate_firstorder_features(patient, lung1_path, mute=False)
-        f.write(str(feature["original_firstorder_Energy"]) + "\n")
-        print(f"{patient.patientID}: Energy = {patient.firstorder_features}")
-    f.close()
-
-
-    #calculate_firstorder_features(patient1, lung1_path)
-
-
+    
