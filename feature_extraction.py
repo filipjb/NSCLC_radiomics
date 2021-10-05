@@ -57,14 +57,16 @@ if __name__ == '__main__':
 
     dataframes = list()
 
-    for patient in lung1[0:5]:
+    lung1_sub = lung1[0:5]
+
+    for patient in lung1_sub:
         fo_features = calculate_firstorder_features(patient, lung1_path)
         print(fo_features)
         new_dict = dict()
         for key in fo_features:
             if not re.search("diagnostics", key):
                 new_dict.update({key: float(fo_features[key])})
-        df = pd.DataFrame(new_dict, index=[0])
+        df = pd.DataFrame(new_dict, index=[lung1_sub.index(patient)])
         dataframes.append(df)
 
     firstorder_featues = pd.concat(dataframes)
