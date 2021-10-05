@@ -104,6 +104,11 @@ class Patient:
                 # Exctracting the image array from the dicom dataset and adding them to the dict
                 # together with their slice location
                 image_array = dataset.pixel_array
+                # The RescaleIntercept is 0 if the image has SmallestImagePixelValue == 0, hence we use
+                # the SmallestImagePixelValue instead to adjust the image
+                if np.min(image_array) < 0:
+                    # Subtract the minimum value since it is negative
+                    image_array = image_array - np.min(image_array)
                 images_dict.update({location: image_array})
 
             # Sorting the dictionary by the numerical value of the keys, i.e. slice positions
@@ -287,6 +292,9 @@ class StudyGroup:
 
     def __len__(self):
         return len(self.patients)
+
+    def index(self, item):
+        return self.patients.index(item)
 
     # Method for adding a single patient into the group
     def add_patient(self, new_patient):

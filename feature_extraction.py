@@ -56,21 +56,21 @@ if __name__ == '__main__':
     remove_disqualified_patients(lung1, disq_patients)
 
     dataframes = list()
-
-    lung1_sub = lung1[0:5]
-
-    for patient in lung1_sub:
+    # Looping through every patient to calculate their features
+    for patient in lung1:
         fo_features = calculate_firstorder_features(patient, lung1_path)
-        print(fo_features)
+        # Creating a new dict inorder to sort out dict values that are not relevant and is not possible
+        # to be added to a dataframe, i.e. the different elements containing metadata about the input image
         new_dict = dict()
+        # If a key in the dict contains the word "diagnostics" it is not compatible with a dataframe, and is thus
+        # not added to the dict that will be made a df
         for key in fo_features:
             if not re.search("diagnostics", key):
                 new_dict.update({key: float(fo_features[key])})
-        df = pd.DataFrame(new_dict, index=[lung1_sub.index(patient)])
+        df = pd.DataFrame(new_dict, index=[lung1.index(patient)])
         dataframes.append(df)
 
     firstorder_featues = pd.concat(dataframes)
 
-    firstorder_featues.to_csv(
-        r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\firstorder.csv"
-    )
+    
+
