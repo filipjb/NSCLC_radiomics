@@ -285,6 +285,9 @@ class StudyGroup:
     def __getitem__(self, item):
         return self.patients[item]
 
+    def __len__(self):
+        return len(self.patients)
+
     # Method for adding a single patient into the group
     def add_patient(self, new_patient):
         self.patients.append(new_patient)

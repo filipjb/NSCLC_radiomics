@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import radiomics
-import logging
 import pandas as pd
 from patient_classes import Patient, StudyGroup
 from radiomics import featureextractor, getTestCase, firstorder
@@ -53,4 +52,3 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     remove_disqualified_patients(lung1, disq_patients)
 
-    
