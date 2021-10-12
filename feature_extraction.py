@@ -19,28 +19,42 @@ def initiate_featureextractor(settings=dict):
     return extractor
 
 
-def calculate_firstorder_features(
-        patient,
-        filepath,
-        featurelist=None,
-        mute=True
-):
-    images = sitk.GetImageFromArray(patient.return_image_array(filepath))
-    masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
-
+def calculate_firstorder_features(patient_group, filepath, featurelist=None, mute=True):
     extractor = initiate_featureextractor()
-    #extractor.enableFeaturesByName(firstorder=["Energy"])
+    # extractor.enableFeaturesByName(firstorder=["Energy"])
     extractor.enableFeatureClassByName(featureClass="firstorder")
+    # A list for constructing the final total dataframe that will be returned to the user
+    dataframes = list()
 
-    print(f"\nCalculating first-order features for patient {patient}")
-    # The feature vector returned by execute is a collections.OrderedDict
-    feature_dict = extractor.execute(images, masks)
-    if not mute:
-        for featurename in feature_dict.keys():
-            print(f"Computed {featurename}: {feature_dict[featurename]}")
+    # Looping through every patient in the group to calcualate each patients featurevalues
+    for patient in patient_group:
+        # Retrieving images and segmentations from the patient
+        images = sitk.GetImageFromArray(patient.return_image_array(filepath))
+        masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
 
-    patient.firstorder_features = feature_dict
-    return feature_dict
+        print(f"\nCalculating first-order features for patient {patient}")
+        # The feature vector returned by execute is a collections.OrderedDict
+        feature_dict = extractor.execute(images, masks)
+        if not mute:
+            for featurename in feature_dict.keys():
+                print(f"Computed {featurename}: {feature_dict[featurename]}")
+        # Assigning the calculated firstorder features to the patient property
+        patient.firstorder_features = feature_dict
+
+        # Creating a new dict in order to sort out dict values that are not relevant and is not possible
+        # to be added to a dataframe (vectors), i.e. the different elements containing metadata about the input image
+        new_dict = dict()
+        # If a key in the dict contains the word "diagnostics" it is not compatible with a dataframe, and is thus
+        # not added to the dict that will be made a df
+        for key in feature_dict:
+            if not re.search("diagnostics", key):
+                new_dict.update({key: float(feature_dict[key])})
+        df = pd.DataFrame(new_dict, index=[lung1.index(patient)])
+        dataframes.append(df)
+    # Concatenating the list of dataframes into a single dataframe containing all features of all patients
+    features_df = pd.concat(dataframes)
+    # Returning the final dataframe
+    return features_df
 
 
 if __name__ == '__main__':
@@ -55,22 +69,4 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     remove_disqualified_patients(lung1, disq_patients)
 
-    dataframes = list()
-    # Looping through every patient to calculate their features
-    for patient in lung1:
-        fo_features = calculate_firstorder_features(patient, lung1_path)
-        # Creating a new dict inorder to sort out dict values that are not relevant and is not possible
-        # to be added to a dataframe, i.e. the different elements containing metadata about the input image
-        new_dict = dict()
-        # If a key in the dict contains the word "diagnostics" it is not compatible with a dataframe, and is thus
-        # not added to the dict that will be made a df
-        for key in fo_features:
-            if not re.search("diagnostics", key):
-                new_dict.update({key: float(fo_features[key])})
-        df = pd.DataFrame(new_dict, index=[lung1.index(patient)])
-        dataframes.append(df)
-
-    firstorder_featues = pd.concat(dataframes)
-
     
-
