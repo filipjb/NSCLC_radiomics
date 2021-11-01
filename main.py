@@ -1,4 +1,3 @@
-
 from patient_classes import Patient, StudyGroup
 from matplotlib import pyplot as plt
 
