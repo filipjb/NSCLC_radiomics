@@ -509,7 +509,7 @@ class StudyGroup:
             stage3a * 100 / (self.size() - invalid), stage3b * 100 / (self.size() - invalid)
         ]
 
-
+#%%
 if __name__ == '__main__':
     # This block is for debugging
     def slice_viewer(array):
@@ -523,6 +523,8 @@ if __name__ == '__main__':
         
         plt.show()
 
+    import SimpleITK as sitk
+    import pywt
 
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
@@ -532,4 +534,10 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
+    image = patient1.return_image_array(dicom_path)
+    mask = patient1.return_GTV_segmentations(dicom_path)
+    #%%
+    coeffs = pywt.dwtn(image, "coif1")
+    print(coeffs)
 
+#%%
