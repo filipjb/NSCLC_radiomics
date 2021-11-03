@@ -132,13 +132,15 @@ def calculate_wavelet_texture_features(patient_group, filepath, mute=True):
     for patient in patient_group:
         # CT images are not made into sitk images yet, as the wavelet transform uses numpy array
         images = patient.return_image_array(filepath)
-        masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
+        masks = patient.return_GTV_segmentations(filepath)
 
         # Transform must have even dimensional images to work, so if the number of slices
         # is not even, the image array is padded with an extra black slice
         slices, rows, cols = np.shape(images)
         if slices % 2 != 0:
-            np.append(images, np.zeros([rows, cols]))
+            images = np.append(images, [np.zeros([rows, cols])], axis=0)
+            # Masks must of course correspond with images
+            masks = np.append(masks, [np.zeros([rows, cols])], axis=0)
 
         print(f"Calculating wavelet texture features for patient {patient}")
 
@@ -148,10 +150,13 @@ def calculate_wavelet_texture_features(patient_group, filepath, mute=True):
         # We are interested in the HLH (i.e. dad) decomposition of the image, as it is the one
         # used for the radiomic signature in the study
         HLH = decomp["dad"]
+
         wavelet_images = sitk.GetImageFromArray(HLH)
+        sitkmasks = sitk.GetImageFromArray(masks)
+
         # The size of each decomposition is the same as the original, so we can use the same
         # mask for feature calculation
-        glrlm_wavelet = glrlm.RadiomicsGLRLM(wavelet_images, masks)
+        glrlm_wavelet = glrlm.RadiomicsGLRLM(wavelet_images, sitkmasks)
         glrlm_wavelet.enableAllFeatures()
         glrlm_wavelet.execute()
 
@@ -186,5 +191,5 @@ if __name__ == '__main__':
 
     sub = lung1[0:5]
 
-    frame = calculate_wavelet_texture_features(sub, lung1_path, mute=False)
-    print(frame)
+    frame = calculate_shape_features(lung1, lung1_path, mute=False)
+    frame.to_csv(path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\shape.csv")
