@@ -191,5 +191,5 @@ if __name__ == '__main__':
 
     sub = lung1[0:5]
 
-    frame = calculate_shape_features(lung1, lung1_path, mute=False)
-    frame.to_csv(path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\shape.csv")
+    frame = calculate_GLRLM_features(lung1, lung1_path, mute=False)
+    frame.to_csv(path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\glrlm.csv")
