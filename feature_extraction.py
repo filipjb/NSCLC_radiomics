@@ -126,7 +126,7 @@ def calculate_GLRLM_features(patient_group, filepath, mute=True):
     return features_df
 
 
-def calculate_wavelet_texture_features(patient_group, filepath, mute=True):
+def calculate_waveletGLRLM_features(patient_group, filepath, mute=True):
     dataframes = list()
 
     for patient in patient_group:
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     remove_disqualified_patients(lung1, disq_patients)
 
-    sub = lung1[0:5]
-
-    frame = calculate_GLRLM_features(lung1, lung1_path, mute=False)
-    frame.to_csv(path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\glrlm.csv")
+    frame = calculate_GLCM_features(lung1, lung1_path, mute=False)
+    frame.to_csv(
+        path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\glcm.csv"
+    )

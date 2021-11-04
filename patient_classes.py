@@ -523,9 +523,6 @@ if __name__ == '__main__':
         
         plt.show()
 
-    import SimpleITK as sitk
-    import pywt
-
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
@@ -534,3 +531,8 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
+    import pywt
+
+    ct = patient1.return_image_array(dicom_path)
+    a = pywt.swtn(ct, "coif1", level=1, trim_approx=True)
+    print(a)
