@@ -175,6 +175,7 @@ def calculate_waveletGLRLM_features(patient_group, filepath, mute=True):
 
     return features_df
 
+
 #%%
 if __name__ == '__main__':
 
@@ -182,7 +183,7 @@ if __name__ == '__main__':
     lung1_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     # 014, 021, 085, 095 and 194 are excluded due errors in the files provided for these patients, 128 is excluded
     # due to no segmentatiion file being provded at all (post-operative case, acounted for in study)
-    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-194", "LUNG1-128", "LUNG1-095"]
+    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
     # Initiating our studygroup, adding all patients, and removing those that are excluded
     lung1 = StudyGroup()
@@ -190,6 +191,4 @@ if __name__ == '__main__':
     remove_disqualified_patients(lung1, disq_patients)
 
     frame = calculate_GLCM_features(lung1, lung1_path, mute=False)
-    frame.to_csv(
-        path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\glcm.csv"
-    )
+
