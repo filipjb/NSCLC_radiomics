@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from skimage import color
 
 #%%
-%matplotlib
+#%matplotlib
 im = plt.imread(r"C:\Users\filip\OneDrive\Documents\Masteroppgave\Illustrasjoner\grey_image_example.png", )
 im = color.rgb2gray(im)
 

@@ -126,7 +126,7 @@ def calculate_GLRLM_features(patient_group, filepath, mute=True):
     return features_df
 
 
-def calculate_waveletGLRLM_features(patient_group, filepath, mute=True):
+def calculate_HLHGLRLM_features(patient_group, filepath, mute=True):
     dataframes = list()
 
     for patient in patient_group:
@@ -142,7 +142,7 @@ def calculate_waveletGLRLM_features(patient_group, filepath, mute=True):
             # Masks must of course correspond with images
             masks = np.append(masks, [np.zeros([rows, cols])], axis=0)
 
-        print(f"Calculating wavelet texture features for patient {patient}")
+        print(f"Calculating HLH texture features for patient {patient}")
 
         # Taking the stationary (undecemated) wavelet transform of the ct images,
         # which returns a list of 8 dicts, one dict for each decomposition
@@ -156,7 +156,7 @@ def calculate_waveletGLRLM_features(patient_group, filepath, mute=True):
 
         # The size of each decomposition is the same as the original, so we can use the same
         # mask for feature calculation
-        glrlm_wavelet = glrlm.RadiomicsGLRLM(wavelet_images, sitkmasks)
+        glrlm_wavelet = glrlm.RadiomicsGLRLM(wavelet_images, sitkmasks, **settings)
         glrlm_wavelet.enableAllFeatures()
         glrlm_wavelet.execute()
 
@@ -190,5 +190,7 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     remove_disqualified_patients(lung1, disq_patients)
 
-    frame = calculate_GLCM_features(lung1, lung1_path, mute=False)
-
+    frame = calculate_HLHGLRLM_features(lung1, lung1_path, mute=False)
+    frame.to_csv(
+        path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\HLH_glrlm.csv"
+    )
