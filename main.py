@@ -1,4 +1,3 @@
-
 from patient_classes import Patient, StudyGroup
 from matplotlib import pyplot as plt
 
@@ -49,9 +48,9 @@ if __name__ == '__main__':
 
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     lung1_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
-    # 014, 021, 085 and 194 are excluded due errors in the files provided for these patients, 128 is excluded
+    # 014, 021, 085, 095 and 194 are excluded due errors in the files provided for these patients, 128 is excluded
     # due to no segmentatiion file being provded at all (post-operative case, acounted for in study)
-    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-194", "LUNG1-128"]
+    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
     # Initiating our studygroup, adding all patients, and removing those that are excluded
     lung1 = StudyGroup()
@@ -63,3 +62,4 @@ if __name__ == '__main__':
     excluded_lung1 = StudyGroup()
     excluded_lung1.add_specific_patients(csv_path, disq_patients)
 
+    print_patient_statistics(excluded_lung1)

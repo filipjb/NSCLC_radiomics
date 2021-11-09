@@ -29,11 +29,13 @@ class Patient:
         self.survival_time = survival_time
         # Survival time is measured in days, from the start of treatment
         self.deadstatus = deadstatus
-        # Radiomic featurevalues calculated for the patient will be saed in each object
+
+        # Radiomic featurevalues calculated for the patient will be saved in each object
         self.firstorder_features = None
         self.shapebased_features = None
-        self.textural_features = None
-        self.wavelet_features = None
+        self.GLCM_features = None
+        self.GLRLM_features = None
+        self.HLH_features = None
 
     def __repr__(self):
         return str(self.patientID)
@@ -47,12 +49,16 @@ class Patient:
         return self.__shapebased_features
 
     @property
-    def textural_features(self):
-        return self.__textural_features
+    def GLCM_features(self):
+        return self.__GLCM_features
 
     @property
-    def wavelet_features(self):
-        return self.__wavelet_features
+    def GLRLM_features(self):
+        return self.__GLRLM_features
+
+    @property
+    def HLH_features(self):
+        return self.__HLH_features
 
     @firstorder_features.setter
     def firstorder_features(self, features):
@@ -62,13 +68,17 @@ class Patient:
     def shapebased_features(self, features):
         self.__shapebased_features = features
 
-    @textural_features.setter
-    def textural_features(self, features):
-        self.__textural_features = features
+    @GLCM_features.setter
+    def GLCM_features(self, features):
+        self.__GLCM_features = features
 
-    @wavelet_features.setter
-    def wavelet_features(self, features):
-        self.__wavelet_features = features
+    @GLRLM_features.setter
+    def GLRLM_features(self, features):
+        self.__GLRLM_features = features
+
+    @HLH_features.setter
+    def HLH_features(self, features):
+        self.__HLH_features = features
 
     # This method will take in the path to the folder containing all the the subfolders named
     # with the patient-ID: Lung1-xxx, and return the correct image array of the patient, using
@@ -523,7 +533,6 @@ if __name__ == '__main__':
         
         plt.show()
 
-
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
@@ -532,4 +541,8 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
+    import pywt
 
+    ct = patient1.return_image_array(dicom_path)
+    a = pywt.swtn(ct, "coif1", level=1, trim_approx=True)
+    print(a)
