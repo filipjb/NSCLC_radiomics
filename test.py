@@ -1,19 +1,17 @@
+import pydicom as dicom
 import numpy as np
 import matplotlib.pyplot as plt
-from skimage import color
 
 #%%
-#%matplotlib
-im = plt.imread(r"C:\Users\filip\OneDrive\Documents\Masteroppgave\Illustrasjoner\grey_image_example.png", )
-im = color.rgb2gray(im)
+path = r"C:\Users\filip\Desktop\test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
 
-fig = plt.figure(num=1, clear=True)
-ax = fig.add_subplot(1, 1, 1, projection='3d')
+ds = dicom.dcmread(path)
 
-x = y = np.arange(256)
-X, Y = np.meshgrid(x, y)
+dic = dict()
 
-#%%
+for entry in ds.StructureSetROISequence:
+    dic.update({entry.ROIName: int(entry.ROINumber)})
 
-ax.plot_surface(X, Y, im, cmap="gray")
-fig.show()
+a = ds.ROIContourSequence
+
+print(dic)
