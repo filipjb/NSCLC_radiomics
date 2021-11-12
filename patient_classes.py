@@ -4,6 +4,7 @@ import numpy as np
 import pydicom as dicom
 import re
 import cv2
+from skimage.draw import polygon
 
 from slice_viewer import IndexTracker
 
@@ -84,7 +85,7 @@ class Patient:
     # with the patient-ID: Lung1-xxx, and return the correct image array of the patient, using
     # self.patientID to find the correct directory and image array, as well as sorting the images
     # to be in the correct order accordin to slice position given in the dcm file
-    def return_image_array(self, path):
+    def get_TCIA_images(self, path):
         # Changing directory to the folder contatining patient
         # subfolders
         os.chdir(path)
@@ -128,11 +129,55 @@ class Patient:
 
             return final_array
 
+    # Method to return ct images, adapted for haukeland dicomstructure
+    def get_haukeland_images(self, path):
+        pass
+
+    # Method to return GTV segmentations, adapted for haukeland dicomstructure
+    def get_haukeland_GTV_segmentations(self, path):
+        # dmcread reutrns a pydicom FileDataset containing entries of metadata on the patient
+        seq = dicom.dcmread(path)
+
+        # The image and segmentation data is contained in the entry tagged with StructureSetROISequence
+        # It is a pydicom Sequence, where each entry is a structure that is segmented, so we loop over the structures
+        # and find the one tagged with "GTV" for the tumor volume
+        for entry in seq.StructureSetROISequence:
+            if re.search("GTV", entry.ROIName):
+                contourNumber = int(entry.ROINumber)
+
+        # Thus we can retrieve the pydicom Dataset corresponding to the segmented GTV, from seq.ROIContourSequence,
+        # which will be a pydicom Dataset, where data on each slice is stored in a Sequence tagged with Contoursequence
+        ds = seq.ROIContourSequence[contourNumber].ContourSequence
+
+        contours = list()
+        # In this Sequence, the contour coordiantes array of each entry is saved as a 1d array
+        # in the tag ContourData, so we rashape the array when we retrieve it
+        for n in ds:
+            contourList = np.array(n.ContourData)
+            # Each contoured pointed is stord sequentially; x1, y1, z1, x2, y2, z2, ..., so the array is reshaped
+            # thus the contour variable contains the coordinates of the contour line around the structure
+            contour = np.reshape(contourList, (len(contourList) // 3, 3))
+            contours.append(contour)
+
+        # A list binary image masks that will be returned to the user
+        masks = []
+        # Going through each contour
+        for cont in contours:
+            # Creating a black image
+            mask = np.zeros([512, 512])
+            # Drawing a polygon at the coordinates of the contour and setting the polygon coordinates
+            # in the black image to 1
+            r, c = polygon(cont[:, 0], cont[:, 1], mask.shape)
+            mask[r, c] = 1
+            masks.append(mask)
+
+        return masks
+
     # This method, similar to the previous, will take in the path
     # to the folder containing all the the subfolders named with
     # the patient-ID: Lung1-xxx, and return as struct containing all
     # the segmentations that are associated with the patient
-    def return_segmentations(self, path):
+    def get_TCIA_segmentations(self, path):
         # Changing directory to the folder contatining patient
         # subfolders
         os.chdir(path)
@@ -196,11 +241,11 @@ class Patient:
     # A method for returning only the GTV segmentation for when radiomics will be computed
     # It will return several segmentations in a dict if there are more segmentations marked
     # with the phrase "GTV"
-    def return_GTV_segmentations(self, path, return_dict=False):
+    def get_TCIA_GTV_segmentations(self, path, return_dict=False):
         # Dict that will be returned to the user
         gtv_dict = {}
         # Fetch segmentations from the more general method
-        segmentations = self.return_segmentations(path)
+        segmentations = self.get_TCIA_segmentations(path)
         # print(f"Fetching GTV segmentations of patient: {self.patientID}")
         # Loop through the segmented volumes
         for volume in segmentations:
@@ -221,13 +266,13 @@ class Patient:
             return gtv_dict["GTV-1"]
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
-    # the images, returning an array of the same size to the user
+    # the images, returning an array of the same size to the user, needs TCIA compatible path
     def view_segmentations(self, path, window_width=550, window_height=550):
 
-        segmentations = self.return_segmentations(path)
+        segmentations = self.get_TCIA_segmentations(path)
         # For some reason the relative order of the two image arrays are reversed,
         # so one is flipped to account for this
-        ct_images = np.flipud(self.return_image_array(path))
+        ct_images = np.flipud(self.get_TCIA_images(path))
 
         print(f"Showing segmentations of patient {self.patientID}")
         print(f"Segmented volumes are: {list(segmentations.keys())}")
@@ -543,6 +588,6 @@ if __name__ == '__main__':
 
     import pywt
 
-    ct = patient1.return_image_array(dicom_path)
+    ct = patient1.get_TCIA_images(dicom_path)
     a = pywt.swtn(ct, "coif1", level=1, trim_approx=True)
     print(a)

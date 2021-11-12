@@ -20,8 +20,8 @@ def calculate_firstorder_features(patient_group, filepath, mute=True):
     # Looping through every patient in the group to calcualate each patients featurevalues
     for patient in patient_group:
         # Retrieving images and segmentations from the patient
-        images = sitk.GetImageFromArray(patient.return_image_array(filepath))
-        masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
+        images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
+        masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
 
         print(f"\nCalculating first-order features for patient {patient}")
 
@@ -52,8 +52,8 @@ def calculate_shape_features(patient_group, filepath, mute=True):
     # Looping through every patient in the group and calculating each patients feature values
     for patient in patient_group:
         # Retrieving images and segmentations from the patient
-        images = sitk.GetImageFromArray(patient.return_image_array(filepath))
-        masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
+        images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
+        masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
 
         print(f"Calculating shape features for patient {patient}")
 
@@ -80,8 +80,8 @@ def calculate_GLCM_features(patient_group, filepath, mute=True):
     dataframes = list()
 
     for patient in patient_group:
-        images = sitk.GetImageFromArray(patient.return_image_array(filepath))
-        masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
+        images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
+        masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
 
         print(f"Calculating GLCM features for patient {patient}")
 
@@ -105,8 +105,8 @@ def calculate_GLRLM_features(patient_group, filepath, mute=True):
     dataframes = list()
 
     for patient in patient_group:
-        images = sitk.GetImageFromArray(patient.return_image_array(filepath))
-        masks = sitk.GetImageFromArray(patient.return_GTV_segmentations(filepath))
+        images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
+        masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
 
         print(f"Calculating GLRLM features for patient {patient}")
 
@@ -131,8 +131,8 @@ def calculate_HLHGLRLM_features(patient_group, filepath, mute=True):
 
     for patient in patient_group:
         # CT images are not made into sitk images yet, as the wavelet transform uses numpy array
-        images = patient.return_image_array(filepath)
-        masks = patient.return_GTV_segmentations(filepath)
+        images = patient.get_TCIA_images(filepath)
+        masks = patient.get_TCIA_GTV_segmentations(filepath)
 
         # Transform must have even dimensional images to work, so if the number of slices
         # is not even, the image array is padded with an extra black slice

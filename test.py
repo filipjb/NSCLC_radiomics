@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 testpath = r"C:\Users\filip\Desktop\test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
 
 
-#TODO Need to make this function convert the contours into masks after extracting all the contour points
+#TODO Need to adjust mask position to patient position
 def get_contour_coords(path):
     # dmcread reutrns a pydicom FileDataset containing many entries of metadata on the patient
     seq = dicom.dcmread(path)
@@ -25,7 +25,8 @@ def get_contour_coords(path):
     ds = seq.ROIContourSequence[contourNumber].ContourSequence
 
     contours = list()
-    # In this Sequence, the image array of each entry is saved as a 1d array in the tag ContourData
+    # In this Sequence, the contour coordiantes array of each entry is saved as a 1d array
+    # in the tag ContourData, so we rashape the array when we retrieve it
     for n in ds:
         contourList = np.array(n.ContourData)
         # Each contoured pointed is stord sequentially; x1, y1, z1, x2, y2, z2, ..., so the array is reshaped
