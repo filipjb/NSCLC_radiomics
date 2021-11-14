@@ -5,7 +5,7 @@ from skimage.draw import polygon
 import matplotlib.pyplot as plt
 
 #%%
-testpath = r"C:\Users\filip\Desktop\test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
+testpath = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
 
 
 #TODO Need to adjust mask position to patient position
