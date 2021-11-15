@@ -53,14 +53,6 @@ def get_contour_coords(path):
     return masks
 
 
-
-def show_energy_km(path, threshold="median"):
-    # Need dataframe column  of survival time, deadstatus and "group" = 1 or 2 depending on patients feature value
-    # is above or below some threshold = feature valuue median is used in study
-
-    pass
-
-
 if __name__ == '__main__':
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"

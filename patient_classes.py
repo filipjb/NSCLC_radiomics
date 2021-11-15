@@ -134,6 +134,8 @@ class Patient:
         pass
 
     # Method to return GTV segmentations, adapted for haukeland dicomstructure
+    # TODO method for converting contour to masks is probably unreliable, rework it.
+    #  There was a holefill function tried out before settlign on polygon, maybe try that
     def get_haukeland_GTV_segmentations(self, path):
         # dmcread reutrns a pydicom FileDataset containing entries of metadata on the patient
         seq = dicom.dcmread(path)
@@ -587,8 +589,11 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
-    import pywt
+    # TODO
+    #  *Segmentations and CT must be read at the same time for Haukeland images, make a single function
+    #   that returns two arrays; one of CT images and one of segmentation masks
+    #   -Maybe adapt TCIA functions into this single-function structure as well, if doable
+    #  *Figure out have to make customizable Kaplan-Meier plots
+    #  * Note that the current method for converting contour to mask might be unreliable when the
+    #    segmented contour consists of more than one disjoint regions, need to rework it
 
-    ct = patient1.get_TCIA_images(dicom_path)
-    a = pywt.swtn(ct, "coif1", level=1, trim_approx=True)
-    print(a)

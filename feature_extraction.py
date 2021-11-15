@@ -176,7 +176,6 @@ def calculate_HLHGLRLM_features(patient_group, filepath, mute=True):
     return features_df
 
 
-#%%
 if __name__ == '__main__':
 
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
@@ -190,7 +189,3 @@ if __name__ == '__main__':
     lung1.add_all_patients(csv_path)
     remove_disqualified_patients(lung1, disq_patients)
 
-    frame = calculate_HLHGLRLM_features(lung1, lung1_path, mute=False)
-    frame.to_csv(
-        path_or_buf=r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\HLH_glrlm.csv"
-    )
