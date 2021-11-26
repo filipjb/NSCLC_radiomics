@@ -178,6 +178,8 @@ def calculate_HLHGLRLM_features(patient_group, filepath, mute=True):
 
 if __name__ == '__main__':
 
+    # TODO segmentation arrays are returned upside down, need to fix this and calculate all feature again
+
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     lung1_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     # 014, 021, 085, 095 and 194 are excluded due errors in the files provided for these patients, 128 is excluded

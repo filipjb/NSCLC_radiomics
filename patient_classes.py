@@ -203,7 +203,7 @@ class Patient:
                 # If a directory contains the string, we choose it
                 if re.search("Segmentation", dirname):
                     os.chdir(os.path.join(os.getcwd(), dirname))
-            # Perhaps add some handling here for if file not found
+            # TODO Perhaps add some handling here for if file not found
 
             # In this directory there is a single.dcm file containg
             # all the segmentations for the patient
@@ -265,7 +265,8 @@ class Patient:
         # Since all patients in Lung1 only have a singly gtv segmentation marked with GTV-1 we can (for now) return the
         # segmentation as an array in this way
         else:
-            return gtv_dict["GTV-1"]
+            # Array is wrong way round along the slice axis, so it is flipped to fit with CT array
+            return np.flipud(gtv_dict["GTV-1"])
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
     # the images, returning an array of the same size to the user, needs TCIA compatible path
@@ -588,6 +589,20 @@ if __name__ == '__main__':
     Lung1_group.add_all_patients(csv_path)
 
     patient1: Patient = Lung1_group.patients[0]
+
+    index = 60
+    image = patient1.get_TCIA_images(dicom_path)[index]
+    mask = patient1.get_TCIA_GTV_segmentations(dicom_path)[index]
+
+
+    plt.gray()
+    plt.subplot(131), plt.imshow(image), plt.title("Image")
+    plt.subplot(132), plt.imshow(mask), plt.title("Mask")
+    plt.subplot(133), plt.imshow(np.multiply(image, mask)), plt.title("Segmented image")
+    plt.show()
+
+
+
 
     # TODO
     #  *Segmentations and CT must be read at the same time for Haukeland images, make a single function

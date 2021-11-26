@@ -53,6 +53,10 @@ def get_contour_coords(path):
     return masks
 
 
+
+
+
+
 if __name__ == '__main__':
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
