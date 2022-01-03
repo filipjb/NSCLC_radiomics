@@ -137,7 +137,7 @@ class Patient:
     # TODO method for converting contour to masks is probably unreliable, rework it.
     #  There was a holefill function tried out before settlign on polygon, maybe try that
     def get_haukeland_GTV_segmentations(self, path):
-        # dmcread reutrns a pydicom FileDataset containing entries of metadata on the patient
+        # dmcread returns a pydicom FileDataset containing entries of metadata on the patient
         seq = dicom.dcmread(path)
 
         # The image and segmentation data is contained in the entry tagged with StructureSetROISequence
@@ -590,9 +590,9 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
-    index = 60
+    index = 33
     image = patient1.get_TCIA_images(dicom_path)[index]
-    mask = patient1.get_TCIA_GTV_segmentations(dicom_path)[index]
+    mask = patient1.get_TCIA_segmentations(dicom_path)["Lung-Left"][index]
 
 
     plt.gray()

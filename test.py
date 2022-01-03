@@ -7,14 +7,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import kaplanmeier as km
 from patient_classes import Patient, StudyGroup
-
+import seaborn as sns
 
 testpath = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
 
 
 # TODO Need to adjust mask position to patient position
 def get_contour_coords(path):
-    # dmcread reutrns a pydicom FileDataset containing many entries of metadata on the patient
+    # dmcread returns a pydicom FileDataset containing many entries of metadata on the patient
     seq = dicom.dcmread(path)
 
     # The image and segmentation data is contained in the entry tagged with StructureSetROISequence
