@@ -236,7 +236,8 @@ class Patient:
                 # The segmentations are added to the segmentation_dict in the order they
                 # appear in the dict
                 index = list(segmentation_dict.keys()).index(keyword)
-                segmentation_dict[keyword] = split_array[index, :, :, :]
+                # The assigned array is flipped along the slice axis to correspond with CT image order
+                segmentation_dict[keyword] = np.flipud(split_array[index, :, :, :])
 
             return segmentation_dict
 
@@ -266,16 +267,14 @@ class Patient:
         # segmentation as an array in this way
         else:
             # Array is wrong way round along the slice axis, so it is flipped to fit with CT array
-            return np.flipud(gtv_dict["GTV-1"])
+            return gtv_dict["GTV-1"]
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
     # the images, returning an array of the same size to the user, needs TCIA compatible path
     def view_segmentations(self, path, window_width=550, window_height=550):
 
         segmentations = self.get_TCIA_segmentations(path)
-        # For some reason the relative order of the two image arrays are reversed,
-        # so one is flipped to account for this
-        ct_images = np.flipud(self.get_TCIA_images(path))
+        ct_images = self.get_TCIA_images(path)
 
         print(f"Showing segmentations of patient {self.patientID}")
         print(f"Segmented volumes are: {list(segmentations.keys())}")
@@ -324,12 +323,11 @@ class Patient:
         fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
         # Setting patientID as the window title of pyplot
         fig.canvas.set_window_title(self.patientID)
-        # Making the window maximized when the viewer is opened
+        # Adjusting window size when the viewer is opened
         mngr = plt.get_current_fig_manager()
         mngr.resize(window_width, window_height)
 
         plt.show()
-
 
     def __str__(self):
         return f"{self.patientID}"
@@ -583,6 +581,7 @@ if __name__ == '__main__':
         plt.show()
 
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+    hauk_path = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
     Lung1_group = StudyGroup()
@@ -590,10 +589,9 @@ if __name__ == '__main__':
 
     patient1: Patient = Lung1_group.patients[0]
 
-    index = 33
+    index = 55
     image = patient1.get_TCIA_images(dicom_path)[index]
-    mask = patient1.get_TCIA_segmentations(dicom_path)["Lung-Left"][index]
-
+    mask = patient1.get_haukeland_GTV_segmentations(hauk_path)[index]
 
     plt.gray()
     plt.subplot(131), plt.imshow(image), plt.title("Image")
