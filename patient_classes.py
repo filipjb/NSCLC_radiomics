@@ -567,18 +567,20 @@ class StudyGroup:
         ]
 
 
+def slice_viewer(array):
+    plt.gray()
+    # Slice viewer:
+    fig, ax = plt.subplots(1, 1)
+    # Second argument of IndexTracker() is the array we want to
+    # examine
+    tracker = IndexTracker(ax, array)
+    fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+
+    plt.show()
+
+
+# This block is for debugging
 if __name__ == '__main__':
-    # This block is for debugging
-    def slice_viewer(array):
-        plt.gray()
-        # Slice viewer:
-        fig, ax = plt.subplots(1, 1)
-        # Second argument of IndexTracker() is the array we want to
-        # examine
-        tracker = IndexTracker(ax, array)
-        fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-        
-        plt.show()
 
     dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
     hauk_path = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
