@@ -133,9 +133,7 @@ class Patient:
     def get_haukeland_images(self, path):
         pass
 
-    # Method to return GTV segmentations, adapted for haukeland dicomstructure
-    # TODO method for converting contour to masks is probably unreliable, rework it.
-    #  There was a holefill function tried out before settlign on polygon, maybe try that
+    # TODO Replace this with the new one from test.py and link up with patientID
     def get_haukeland_GTV_segmentations(self, path):
         # dmcread returns a pydicom FileDataset containing entries of metadata on the patient
         seq = dicom.dcmread(path)
