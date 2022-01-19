@@ -408,7 +408,7 @@ class StudyGroup:
     # Objective of this method is to take in the path to a .csv
     # file containing all patient data and the adding all the
     # data as patient objects into the group
-    def add_all_patients(self, path):
+    def add_all_patients(self, path, struc="TCIA"):
         file = open(path, "r")
         # [1:] to skip the first line in the file, which contains the header
         for line in file.readlines()[1:]:
@@ -580,23 +580,12 @@ def slice_viewer(array):
 # This block is for debugging
 if __name__ == '__main__':
 
-    dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
-    hauk_path = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
+    dicom_path = r"C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+    HUH_path = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736953205655.4330711959846355332.dcm"
     csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
 
     Lung1_group = StudyGroup()
     Lung1_group.add_all_patients(csv_path)
-
-    patient1: Patient = Lung1_group.patients[12]
-
-    index = 55
-    image = patient1.get_TCIA_images(dicom_path)[index]
-    mask = patient1.get_TCIA_GTV_segmentations(dicom_path)[index]
-
-    plt.gray()
-
-
-
 
     # TODO
     #  *Segmentations and CT must be read at the same time for Haukeland images, make a single function
