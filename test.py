@@ -12,7 +12,7 @@ testpath = r"C:\Users\filip\Desktop\haukeland_test\RS.1.2.246.352.205.4628746736
 
 
 # TODO Implement this into Patient Class when file-structure is known for whole collection, such that
-# patient data can be retrieved based on Patient-ID
+#  patient data can be retrieved based on Patient-ID
 def get_haukeland_data(path, structure="GTV"):
     os.chdir(path)
     ct_dict = dict()
@@ -54,7 +54,7 @@ def get_haukeland_data(path, structure="GTV"):
                 # thus the contour variable contains the coordinates of the contour line around the structure
                 contour = np.reshape(contour, (len(contour) // 3, 3))
                 # Make the contour into a mask:
-                contourMask = np.zeros([512, 512])
+                contourMask = np.zeros([ct.pixel_array.shape[0], ct.pixel_array.shape[1]])
                 r, c = polygon((contour[:, 0] - patient_x) / ps, (contour[:, 1] - patient_y) / ps, contourMask.shape)
                 contourMask[r, c] = 1
                 totalMask += np.fliplr(np.rot90(contourMask, axes=(1, 0)))

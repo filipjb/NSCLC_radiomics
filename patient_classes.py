@@ -587,17 +587,13 @@ if __name__ == '__main__':
     Lung1_group = StudyGroup()
     Lung1_group.add_all_patients(csv_path)
 
-    patient1: Patient = Lung1_group.patients[0]
+    patient1: Patient = Lung1_group.patients[12]
 
     index = 55
     image = patient1.get_TCIA_images(dicom_path)[index]
-    mask = patient1.get_haukeland_GTV_segmentations(hauk_path)[index]
+    mask = patient1.get_TCIA_GTV_segmentations(dicom_path)[index]
 
     plt.gray()
-    plt.subplot(131), plt.imshow(image), plt.title("Image")
-    plt.subplot(132), plt.imshow(mask), plt.title("Mask")
-    plt.subplot(133), plt.imshow(np.multiply(image, mask)), plt.title("Segmented image")
-    plt.show()
 
 
 
