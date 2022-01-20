@@ -135,7 +135,7 @@ class Patient:
     # path parameter is to the directory containing all patient-specific directories, which in turn each contain
     # the collection of dicom files assosciated with the patient
     def get_haukeland_data(self, path, structure="GTVp"):
-        os.chdir(path)
+        os.chdir(os.path.join(path, str(self.patientID)))
         ct_dict = dict()
         masks = dict()
 
@@ -451,6 +451,13 @@ class StudyGroup:
 
         return age, t_stage, n_stage, m_stage, overall_stage, histology, gender, survival_time, deadstatus
 
+    # (Temporary?) method for adding HUH patients to a PatienGroup via dicom files
+    def add_HUH_patients(self, path):
+        os.chdir(path)
+        for dirname in os.listdir(os.getcwd()):
+            patient = Patient(dirname, None, None, None, None, None, None, None, None, None)
+            self.patients.append(patient)
+
     # Objective of this method is to take in the path to a .csv
     # file containing all patient data and the adding all the
     # data as patient objects into the group
@@ -627,19 +634,25 @@ def slice_viewer(array):
 if __name__ == '__main__':
 
     lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
-    HUH_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data\1_radiomics_HUH"
+    HUH_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
     csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
     lung1_group = StudyGroup()
     lung1_group.add_all_patients(csv_path)
 
-    patient0 = lung1_group[0]
-    ims1, masks1 = patient0.get_haukeland_data(HUH_path, structure="GTV")
-    print(np.min(ims1), np.max(ims1))
-    ims2 = patient0.get_TCIA_images(lung1_path)
-    masks2 = patient0.get_TCIA_GTV_segmentations(lung1_path)
-    print(np.min(ims1), np.max(ims2))
+    huh_group = StudyGroup()
+    huh_group.add_HUH_patients(path=HUH_path)
+
+    for patient in huh_group:
+        patient.view_segmentations(HUH_path, pathtype="HUH")
+
+
+    #ims1, masks1 = patient0.get_haukeland_data(HUH_path, structure="GTV")
+    #print(np.min(ims1), np.max(ims1))
+    #ims2 = patient0.get_TCIA_images(lung1_path)
+    #masks2 = patient0.get_TCIA_GTV_segmentations(lung1_path)
+    #print(np.min(ims1), np.max(ims2))
 
 
     # TODO
