@@ -61,6 +61,8 @@ def get_haukeland_data(path, structure="GTV"):
 
         masks.update({patient_z: totalMask > 0})
 
+
+
     # Sorting the ct dict by image slice position:
     sorted_dict = {k: v for k, v in sorted(ct_dict.items(), key=lambda item: -item[0])}
     ct_images = np.array(list(sorted_dict.values()))
@@ -73,17 +75,19 @@ def get_haukeland_data(path, structure="GTV"):
 
 
 if __name__ == '__main__':
-    dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
-    csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
-    hauk_path = r"C:\Users\filip\Desktop\haukeland_test"
+    lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
+    HUH_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data\1_radiomics_HUH"
+    csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
     Lung1_group = StudyGroup()
-    #Lung1_group.add_all_patients(csv_path)
+    Lung1_group.add_all_patients(csv_path)
 
-    ims, masks = get_haukeland_data(hauk_path, "Lungs")
+    ims, masks = get_haukeland_data(HUH_path, "Lungs")
 
-    slice_viewer(np.multiply(masks, ims))
+    plt.imshow(masks[55])
+    plt.show()
+
     '''
     stats_df = pd.read_csv(csv_path)
     firstorder_df = pd.read_csv("pythondata/feature_files/firstorder.csv")
