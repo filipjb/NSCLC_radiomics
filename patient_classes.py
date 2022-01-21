@@ -644,12 +644,8 @@ if __name__ == '__main__':
     huh_group = StudyGroup()
     huh_group.add_HUH_patients(path=huh_path)
 
-
     # TODO
     #  *Segmentations and CT must be read at the same time for Haukeland images, make a single function
     #   that returns two arrays; one of CT images and one of segmentation masks
     #   -Maybe adapt TCIA functions into this single-function structure as well, if doable
     #  *Figure out have to make customizable Kaplan-Meier plots
-    #  * Note that the current method for converting contour to mask might be unreliable when the
-    #    segmented contour consists of more than one disjoint regions, need to rework it
-

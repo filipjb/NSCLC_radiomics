@@ -1,6 +1,10 @@
+import logging
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import radiomics
+
 from patient_classes import Patient, StudyGroup
 from radiomics import firstorder, shape, glcm, glrlm
 import SimpleITK as sitk
@@ -13,15 +17,31 @@ settings = {'binWidth': 25,
             'resampledPixelSpacing': None}
 
 
-def calculate_firstorder_features(patient_group, filepath, mute=True):
+def calculate_firstorder_features(patient_group, filepath, filetype="TCIA", struc="GTVp", mute=True):
+
+    log_file = r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics" \
+               r"\feature_files\logs\firstorder_log.txt"
+    handler = logging.FileHandler(filename=log_file, mode="w")
+    formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
+    handler.setFormatter(formatter)
+    radiomics.logger.addHandler(handler)
+    radiomics.logger.setLevel(logging.DEBUG)
+
     # A list for constructing the final total dataframe that will be returned to the user
     dataframes = list()
 
     # Looping through every patient in the group to calcualate each patients featurevalues
     for patient in patient_group:
         # Retrieving images and segmentations from the patient
-        images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
-        masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
+        if filetype == "TCIA":
+            images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
+            masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
+        elif filetype == "HUH":
+            images, masks = patient.get_haukeland_data(filepath, structure=struc)
+            images, masks = sitk.GetImageFromArray(images), sitk.GetImageFromArray(masks)
+        else:
+            print("Error: Uncrecognized filetype")
+            quit()
 
         print(f"\nCalculating first-order features for patient {patient}")
 
@@ -37,6 +57,7 @@ def calculate_firstorder_features(patient_group, filepath, mute=True):
                 print(f"Computed {featurename}: {firstorder_features.featureValues[featurename]}")
         # Turning the dict into a dataframe
         df = pd.DataFrame(firstorder_features.featureValues, index=[patient_group.index(patient)])
+        df.insert(0, "PatientID", patient.patientID)
         # And appending the dataframe to the list of all dataframes
         dataframes.append(df)
     # Concatenating the list of dataframes into a single dataframe containing all features of all patients
@@ -178,16 +199,20 @@ def calculate_HLHGLRLM_features(patient_group, filepath, mute=True):
 
 if __name__ == '__main__':
 
-    # TODO segmentation arrays are returned upside down, need to fix this and calculate all feature again
-
-    csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
-    lung1_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
+    lung1_csv = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
+    lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
+    huh_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
     # 014, 021, 085, 095 and 194 are excluded due errors in the files provided for these patients, 128 is excluded
     # due to no segmentatiion file being provded at all (post-operative case, acounted for in study)
     disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
-    # Initiating our studygroup, adding all patients, and removing those that are excluded
-    lung1 = StudyGroup()
-    lung1.add_all_patients(csv_path)
-    remove_disqualified_patients(lung1, disq_patients)
+    # Initiating lung1 studygroup, adding all patients, and removing those that are excluded
+    lung1_group = StudyGroup()
+    lung1_group.add_all_patients(lung1_csv)
+    remove_disqualified_patients(lung1_group, disq_patients)
+    # Initiating HUH group
+    huh_group = StudyGroup()
+    huh_group.add_HUH_patients(huh_path)
 
+    df = calculate_firstorder_features(huh_group, huh_path, filetype="HUH", mute=False)
+    pd.DataFrame.to_csv(df, r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\firstorder.csv")
