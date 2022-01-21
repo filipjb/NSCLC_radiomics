@@ -99,6 +99,7 @@ class Patient:
         # path an error is returned to the user, and the process
         # is terminated
         except FileNotFoundError as e:
+            print(e, "\n")
             print(f"\nError: The specified path is not a directory containing"
                   f" the expected patient-ID: {self.patientID}")
         else:
@@ -108,7 +109,6 @@ class Patient:
             # all the dicom files for the patient
             os.chdir(os.listdir(os.getcwd())[0])
             images_dict = {}
-            sorted_images = []
             # Looping through and reading the .dcm files in the folder
             for filename in os.listdir(os.getcwd()):
                 dataset = dicom.dcmread(filename)
@@ -340,7 +340,7 @@ class Patient:
             plt.show()
 
         elif pathtype == "HUH":
-            ct_images, segmentations = self.get_haukeland_data(path)
+            ct_images, segmentations = self.get_haukeland_data(path, structure="GTV")
             segmentations = segmentations.astype(np.uint8)
             ct_rgb_images = []
             for image in ct_images:
@@ -634,7 +634,7 @@ def slice_viewer(array):
 if __name__ == '__main__':
 
     lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
-    HUH_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
+    huh_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
     csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
@@ -642,17 +642,7 @@ if __name__ == '__main__':
     lung1_group.add_all_patients(csv_path)
 
     huh_group = StudyGroup()
-    huh_group.add_HUH_patients(path=HUH_path)
-
-    for patient in huh_group:
-        patient.view_segmentations(HUH_path, pathtype="HUH")
-
-
-    #ims1, masks1 = patient0.get_haukeland_data(HUH_path, structure="GTV")
-    #print(np.min(ims1), np.max(ims1))
-    #ims2 = patient0.get_TCIA_images(lung1_path)
-    #masks2 = patient0.get_TCIA_GTV_segmentations(lung1_path)
-    #print(np.min(ims1), np.max(ims2))
+    huh_group.add_HUH_patients(path=huh_path)
 
 
     # TODO
