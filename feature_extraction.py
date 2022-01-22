@@ -1,7 +1,7 @@
 import logging
+import os
 
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
 import radiomics
 
@@ -19,8 +19,8 @@ settings = {'binWidth': 25,
 
 def calculate_firstorder_features(patient_group, filepath, filetype="TCIA", struc="GTVp", mute=True):
 
-    log_file = r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics" \
-               r"\feature_files\logs\firstorder_log.txt"
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    log_file = os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_firstorder_log.txt")
     handler = logging.FileHandler(filename=log_file, mode="w")
     formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
     handler.setFormatter(formatter)
@@ -63,7 +63,7 @@ def calculate_firstorder_features(patient_group, filepath, filetype="TCIA", stru
     # Concatenating the list of dataframes into a single dataframe containing all features of all patients
     features_df = pd.concat(dataframes)
     # Returning the final dataframe
-    return features_df
+    pd.DataFrame.to_csv(features_df, os.path.join(current_dir, rf"\feature_files\{patient_group.groupID}_firstorder.csv"))
 
 
 def calculate_shape_features(patient_group, filepath, mute=True):
@@ -207,12 +207,12 @@ if __name__ == '__main__':
     disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
     # Initiating lung1 studygroup, adding all patients, and removing those that are excluded
-    lung1_group = StudyGroup()
+    lung1_group = StudyGroup("lung1")
     lung1_group.add_all_patients(lung1_csv)
     remove_disqualified_patients(lung1_group, disq_patients)
     # Initiating HUH group
-    huh_group = StudyGroup()
+    huh_group = StudyGroup("HUH")
     huh_group.add_HUH_patients(huh_path)
 
-    df = calculate_firstorder_features(huh_group, huh_path, filetype="HUH", mute=False)
-    pd.DataFrame.to_csv(df, r"C:\Users\filip\OneDrive\Documents\Masteroppgave\pythonProject\NSCLC_radiomics\firstorder.csv")
+    calculate_firstorder_features(lung1_group, lung1_path, filetype="TCIA", mute=False)
+    calculate_firstorder_features(huh_group, huh_path, filetype="HUH", mute=False)

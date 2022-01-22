@@ -379,8 +379,9 @@ class Patient:
 
 class StudyGroup:
 
-    def __init__(self):
+    def __init__(self, groupID):
         self.patients = []
+        self.groupID = groupID
 
     def __str__(self):
         result = "Group: \n"
