@@ -4,6 +4,9 @@ import numpy as np
 import pydicom as dicom
 import re
 import cv2
+import glob
+from skimage.draw import polygon
+
 
 from slice_viewer import IndexTracker
 
@@ -84,7 +87,7 @@ class Patient:
     # with the patient-ID: Lung1-xxx, and return the correct image array of the patient, using
     # self.patientID to find the correct directory and image array, as well as sorting the images
     # to be in the correct order accordin to slice position given in the dcm file
-    def return_image_array(self, path):
+    def get_TCIA_images(self, path):
         # Changing directory to the folder contatining patient
         # subfolders
         os.chdir(path)
@@ -96,6 +99,7 @@ class Patient:
         # path an error is returned to the user, and the process
         # is terminated
         except FileNotFoundError as e:
+            print(e, "\n")
             print(f"\nError: The specified path is not a directory containing"
                   f" the expected patient-ID: {self.patientID}")
         else:
@@ -105,7 +109,6 @@ class Patient:
             # all the dicom files for the patient
             os.chdir(os.listdir(os.getcwd())[0])
             images_dict = {}
-            sorted_images = []
             # Looping through and reading the .dcm files in the folder
             for filename in os.listdir(os.getcwd()):
                 dataset = dicom.dcmread(filename)
@@ -128,11 +131,73 @@ class Patient:
 
             return final_array
 
-    # This method, similar to the previous, will take in the path
-    # to the folder containing all the the subfolders named with
-    # the patient-ID: Lung1-xxx, and return as struct containing all
+    # TODO Link this up with patient ID to locate correct file, patientID found either from DICOM or csv
+    # path parameter is to the directory containing all patient-specific directories, which in turn each contain
+    # the collection of dicom files assosciated with the patient
+    def get_haukeland_data(self, path, structure="GTVp"):
+        os.chdir(os.path.join(path, str(self.patientID)))
+        ct_dict = dict()
+        masks = dict()
+
+        ct_filelist = glob.glob(os.path.join(os.getcwd(), r"CT*.dcm"))
+        rs_filename = glob.glob(os.path.join(os.getcwd(), r"RS*.dcm"))
+        if not ct_filelist or not rs_filename:
+            raise FileNotFoundError
+
+        for n in range(len(ct_filelist)):
+
+            # ------------ Handling CT-images -------------- #
+            ct = dicom.dcmread(ct_filelist[n])
+            # Adding images to dict, paired with their position along the z-axis
+            ct_dict.update({ct.ImagePositionPatient[2]: ct.pixel_array})
+
+            # ------------- Handling segmentations -------------- #
+            # Extracting patient position from ct dicom
+            patient_x = ct.ImagePositionPatient[0]
+            patient_y = ct.ImagePositionPatient[1]
+            patient_z = ct.ImagePositionPatient[2]
+            ps = ct.PixelSpacing[0]
+
+            seq = dicom.dcmread(rs_filename[0])  # The dicomfile for the segmented structures
+            # Finding the contournumber of the selected structure, such that we can extract it from ROIContourSequence
+            structureNames = [seq.StructureSetROISequence[i].ROIName for i in range(len(seq.StructureSetROISequence))]
+            contourNumber = [i for i, item in enumerate(structureNames) if re.search(structure, item)][0]
+
+            # The contoursequence of the structure we have chosen
+            ds = seq.ROIContourSequence[contourNumber].ContourSequence
+
+            totalMask = np.zeros([ct.pixel_array.shape[0], ct.pixel_array.shape[1]])
+            for element in ds:
+                # If the UID of the contour matches the UID of the sequence, we retrieve the contour:
+                if element.ContourImageSequence[0].ReferencedSOPInstanceUID == ct.SOPInstanceUID:
+                    contour = np.array(element.ContourData)
+                    # Each contoured point is stored sequentially; x1, y1, z1, x2, y2, z2, ...,
+                    # so the array is reshaped thus the contour variable contains the coordinates of the
+                    # contour line around the structure
+                    contour = np.reshape(contour, (len(contour) // 3, 3))
+                    # Make the contour into a mask:
+                    contourMask = np.zeros([ct.pixel_array.shape[0], ct.pixel_array.shape[1]])
+                    r, c = polygon((contour[:, 0] - patient_x) / ps, (contour[:, 1] - patient_y) / ps,
+                                   contourMask.shape)
+                    contourMask[r, c] = 1
+                    totalMask += np.fliplr(np.rot90(contourMask, axes=(1, 0)))
+
+            masks.update({patient_z: totalMask > 0})
+
+        # Sorting the ct dict by image slice position:
+        sorted_dict = {k: v for k, v in sorted(ct_dict.items(), key=lambda item: -item[0])}
+        ct_images = np.array(list(sorted_dict.values()))
+
+        # Sorting patient contours by slice position:
+        sorted_contours = {k: v for k, v in sorted(masks.items(), key=lambda item: -item[0])}
+        ct_masks = np.array(list(sorted_contours.values())).astype(np.uint8)
+
+        return ct_images, ct_masks
+
+    # This method, similar to the previous, will take in the path to the folder containing all the
+    # subfolders named with the patient-ID: Lung1-xxx, and return as struct containing all
     # the segmentations that are associated with the patient
-    def return_segmentations(self, path):
+    def get_TCIA_segmentations(self, path):
         # Changing directory to the folder contatining patient
         # subfolders
         os.chdir(path)
@@ -156,7 +221,7 @@ class Patient:
                 # If a directory contains the string, we choose it
                 if re.search("Segmentation", dirname):
                     os.chdir(os.path.join(os.getcwd(), dirname))
-            # Perhaps add some handling here for if file not found
+            # TODO Perhaps add some handling here for if file not found
 
             # In this directory there is a single.dcm file containg
             # all the segmentations for the patient
@@ -189,18 +254,19 @@ class Patient:
                 # The segmentations are added to the segmentation_dict in the order they
                 # appear in the dict
                 index = list(segmentation_dict.keys()).index(keyword)
-                segmentation_dict[keyword] = split_array[index, :, :, :]
+                # The assigned array is flipped along the slice axis to correspond with CT image order
+                segmentation_dict[keyword] = np.flipud(split_array[index, :, :, :])
 
             return segmentation_dict
 
     # A method for returning only the GTV segmentation for when radiomics will be computed
     # It will return several segmentations in a dict if there are more segmentations marked
     # with the phrase "GTV"
-    def return_GTV_segmentations(self, path, return_dict=False):
+    def get_TCIA_GTV_segmentations(self, path, return_dict=False):
         # Dict that will be returned to the user
         gtv_dict = {}
         # Fetch segmentations from the more general method
-        segmentations = self.return_segmentations(path)
+        segmentations = self.get_TCIA_segmentations(path)
         # print(f"Fetching GTV segmentations of patient: {self.patientID}")
         # Loop through the segmented volumes
         for volume in segmentations:
@@ -218,69 +284,94 @@ class Patient:
         # Since all patients in Lung1 only have a singly gtv segmentation marked with GTV-1 we can (for now) return the
         # segmentation as an array in this way
         else:
+            # Array is wrong way round along the slice axis, so it is flipped to fit with CT array
             return gtv_dict["GTV-1"]
 
     # A method that will take the patient CT-images and apply outlines of the segmentations to
-    # the images, returning an array of the same size to the user
-    def view_segmentations(self, path, window_width=550, window_height=550):
+    # the images, returning an array of the same size to the user, needs TCIA compatible path
+    def view_segmentations(self, path, pathtype="TCIA", window_width=550, window_height=550):
 
-        segmentations = self.return_segmentations(path)
-        # For some reason the relative order of the two image arrays are reversed,
-        # so one is flipped to account for this
-        ct_images = np.flipud(self.return_image_array(path))
+        if pathtype == "TCIA":
+            segmentations = self.get_TCIA_segmentations(path)
+            ct_images = self.get_TCIA_images(path)
+            print(f"Showing segmentations of patient {self.patientID}")
+            print(f"Segmented volumes are: {list(segmentations.keys())}")
 
-        print(f"Showing segmentations of patient {self.patientID}")
-        print(f"Segmented volumes are: {list(segmentations.keys())}")
+            # The array that will be returned to the user
+            ct_rgb_images = []
+            # Looping through the ct-slices of the patient
+            for image in ct_images:
+                # Each image is uint8 normalized in order to be converted to rgb
+                image = cv2.normalize(
+                    image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
+                )
+                # Each image is converted into rgb such that coloured contours can be displayed
+                # on them
+                image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+                # The image is appended to the array that will be returned to the user, creating
+                # the same ct-array as earlier only that the images are in rgb
+                ct_rgb_images.append(image)
+            # converting rgb ct-list into numpy array
+            ct_rgb_images = np.array(ct_rgb_images)
 
-        # The array that will be returned to the user
-        ct_rgb_images = []
-        # Looping through the ct-slices of the patient
-        for image in ct_images:
-            # Each image is uint8 normalized in order to be converted to rgb
-            image = cv2.normalize(
-                image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
-            )
-            # Each image is converted into rgb such that coloured contours can be displayed
-            # on them
-            image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-            # The image is appended to the array that will be returned to the user, creating
-            # the same ct-array as earlier only that the images are in rgb
-            ct_rgb_images.append(image)
-        # converting rgb ct-list into numpy array
-        ct_rgb_images = np.array(ct_rgb_images)
+            # Looping through each organ volume segmentation in the segmentation dict
+            for volume in segmentations:
+                bw_array = segmentations[volume]
+                rgb = [np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)]
+                # Looping through all the images in the segmentation array
+                for i in range(len(bw_array)):
+                    # Picking an image in the segmentation array, and the corresponding ct-image
+                    bw_image = bw_array[i, :, :]
+                    image = ct_rgb_images[i, :, :, :]
+                    # Finding the contours on the binary image:
+                    contours, _ = cv2.findContours(bw_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+                    # The contours are drawn on the corresponding ct image, and the change is made to the
+                    # rgb-array
+                    ct_rgb_images[i, :, :, :] = cv2.drawContours(image, contours, -1, rgb, 2)
 
-        # Looping through each organ volume segmentation in the segmentation dict
-        for volume in segmentations:
-            # segmentations[volume] will be the array of segmentation images of the specific organ,
-            # and is a binary image which we easily can find the contour of
-            bw_array = segmentations[volume]
-            # Creating a random rgb colour which will colour the contour of this volume segmentation
+            # ------------ Viewing the result in the slice-viewer --------------- #
+            fig, ax = plt.subplots(1, 1)
+            tracker = IndexTracker(ax, ct_rgb_images)
+            fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+            fig.canvas.set_window_title(self.patientID)
+            mngr = plt.get_current_fig_manager()
+            mngr.resize(window_width, window_height)
+
+            plt.show()
+
+        elif pathtype == "HUH":
+            ct_images, segmentations = self.get_haukeland_data(path, structure="GTV")
+            segmentations = segmentations.astype(np.uint8)
+            ct_rgb_images = []
+            for image in ct_images:
+                image = cv2.normalize(
+                    image, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U
+                )
+                image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+                ct_rgb_images.append(image)
+            ct_rgb_images = np.array(ct_rgb_images)
+
             rgb = [np.random.randint(0, 255), np.random.randint(0, 255), np.random.randint(0, 255)]
 
-            # Looping through all the images in the segmentation array
-            for i in range(len(bw_array)):
-                # Picking an image in the segmentation array, and the corresponding ct-image
-                bw_image = bw_array[i, :, :]
+            for i in range(len(segmentations)):
+                bw_image = segmentations[i, :, :]
                 image = ct_rgb_images[i, :, :, :]
-                # Finding the contours on the binary image:
                 contours, _ = cv2.findContours(bw_image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-                # The contours are drawn on the corresponding ct image, and the change is made to the
-                # rgb-array
                 ct_rgb_images[i, :, :, :] = cv2.drawContours(image, contours, -1, rgb, 2)
-        # Viewing the result in the slice-viewer:
-        # Slice viewer:
-        fig, ax = plt.subplots(1, 1)
-        # Second argument of IndexTracker() is the array we want to
-        # examine
-        tracker = IndexTracker(ax, ct_rgb_images)
-        fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-        # Setting patientID as the window title of pyplot
-        fig.canvas.set_window_title(self.patientID)
-        # Making the window maximized when the viewer is opened
-        mngr = plt.get_current_fig_manager()
-        mngr.resize(window_width, window_height)
 
-        plt.show()
+            # ------------ Viewing the result in the slice-viewer --------------- #
+            fig, ax = plt.subplots(1, 1)
+            tracker = IndexTracker(ax, ct_rgb_images)
+            fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+            fig.canvas.set_window_title(self.patientID)
+            mngr = plt.get_current_fig_manager()
+            mngr.resize(window_width, window_height)
+
+            plt.show()
+
+        else:
+            print("Error: Unrecognized pathtype")
+            quit()
 
     def __str__(self):
         return f"{self.patientID}"
@@ -288,8 +379,9 @@ class Patient:
 
 class StudyGroup:
 
-    def __init__(self):
+    def __init__(self, groupID):
         self.patients = []
+        self.groupID = groupID
 
     def __str__(self):
         result = "Group: \n"
@@ -360,10 +452,17 @@ class StudyGroup:
 
         return age, t_stage, n_stage, m_stage, overall_stage, histology, gender, survival_time, deadstatus
 
+    # (Temporary?) method for adding HUH patients to a PatienGroup via dicom files
+    def add_HUH_patients(self, path):
+        os.chdir(path)
+        for dirname in os.listdir(os.getcwd()):
+            patient = Patient(dirname, None, None, None, None, None, None, None, None, None)
+            self.patients.append(patient)
+
     # Objective of this method is to take in the path to a .csv
     # file containing all patient data and the adding all the
     # data as patient objects into the group
-    def add_all_patients(self, path):
+    def add_all_patients(self, path, struc="TCIA"):
         file = open(path, "r")
         # [1:] to skip the first line in the file, which contains the header
         for line in file.readlines()[1:]:
@@ -520,29 +619,34 @@ class StudyGroup:
         ]
 
 
+def slice_viewer(array):
+    plt.gray()
+    # Slice viewer:
+    fig, ax = plt.subplots(1, 1)
+    # Second argument of IndexTracker() is the array we want to
+    # examine
+    tracker = IndexTracker(ax, array)
+    fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
+
+    plt.show()
+
+
+# This block is for debugging
 if __name__ == '__main__':
-    # This block is for debugging
-    def slice_viewer(array):
-        plt.gray()
-        # Slice viewer:
-        fig, ax = plt.subplots(1, 1)
-        # Second argument of IndexTracker() is the array we want to
-        # examine
-        tracker = IndexTracker(ax, array)
-        fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-        
-        plt.show()
 
-    dicom_path = "C:/Users/filip/Desktop/image-data/manifest-Lung1/NSCLC-Radiomics"
-    csv_path = "pythondata/NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
+    lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
+    huh_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
+    csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
+    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
-    Lung1_group = StudyGroup()
-    Lung1_group.add_all_patients(csv_path)
+    lung1_group = StudyGroup()
+    lung1_group.add_all_patients(csv_path)
 
-    patient1: Patient = Lung1_group.patients[0]
+    huh_group = StudyGroup()
+    huh_group.add_HUH_patients(path=huh_path)
 
-    import pywt
-
-    ct = patient1.return_image_array(dicom_path)
-    a = pywt.swtn(ct, "coif1", level=1, trim_approx=True)
-    print(a)
+    # TODO
+    #  *Segmentations and CT must be read at the same time for Haukeland images, make a single function
+    #   that returns two arrays; one of CT images and one of segmentation masks
+    #   -Maybe adapt TCIA functions into this single-function structure as well, if doable
+    #  *Figure out have to make customizable Kaplan-Meier plots

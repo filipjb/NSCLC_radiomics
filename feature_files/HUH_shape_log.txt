@@ -1,0 +1,168 @@
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
+DEBUG:radiomics.shape: Initializing feature class
+DEBUG:radiomics.shape: Padding the mask with 0s
+DEBUG:radiomics.shape: Pre-calculate Volume, Surface Area and Eigenvalues
+DEBUG:radiomics.shape: Shape feature class initialized
+WARNING:radiomics.shape: Feature Compactness2 is deprecated, use with caution!
+DEBUG:radiomics.shape: Calculating features
