@@ -17,7 +17,7 @@ settings = {'binWidth': 25,
             'resampledPixelSpacing': None}
 
 
-def calculate_firstorder_features(patient_group, filepath, filetype="TCIA", struc="GTVp", mute=True):
+def calculate_firstorder_features(patient_group, filepath, filetype, struc="GTVp", mute=True):
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
     log_file = os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_firstorder_log.txt")
@@ -63,18 +63,36 @@ def calculate_firstorder_features(patient_group, filepath, filetype="TCIA", stru
     # Concatenating the list of dataframes into a single dataframe containing all features of all patients
     features_df = pd.concat(dataframes)
     # Returning the final dataframe
-    pd.DataFrame.to_csv(features_df, os.path.join(current_dir, rf"\feature_files\{patient_group.groupID}_firstorder.csv"))
+    pd.DataFrame.to_csv(
+        features_df, os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_firstorder.csv")
+    )
 
 
-def calculate_shape_features(patient_group, filepath, mute=True):
+def calculate_shape_features(patient_group, filepath, filetype, struc="GTVp", mute=True):
+
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    log_file = os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_shape_log.txt")
+    handler = logging.FileHandler(filename=log_file, mode="w")
+    formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
+    handler.setFormatter(formatter)
+    radiomics.logger.addHandler(handler)
+    radiomics.logger.setLevel(logging.DEBUG)
+
     # a list for constructing the final total dataframe that will be retured to the use
     dataframes = list()
 
     # Looping through every patient in the group and calculating each patients feature values
     for patient in patient_group:
         # Retrieving images and segmentations from the patient
-        images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
-        masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
+        if filetype == "TCIA":
+            images = sitk.GetImageFromArray(patient.get_TCIA_images(filepath))
+            masks = sitk.GetImageFromArray(patient.get_TCIA_GTV_segmentations(filepath))
+        elif filetype == "HUH":
+            images, masks = patient.get_haukeland_data(filepath, structure=struc)
+            images, masks = sitk.GetImageFromArray(images), sitk.GetImageFromArray(masks)
+        else:
+            print("Error: Uncrecognized filetype")
+            quit()
 
         print(f"Calculating shape features for patient {patient}")
 
@@ -90,11 +108,13 @@ def calculate_shape_features(patient_group, filepath, mute=True):
                 print(f"Computed {featurename}: {shape_features.featureValues[featurename]}")
 
         df = pd.DataFrame(shape_features.featureValues, index=[patient_group.index(patient)])
+        df.insert(0, "PatientID", patient.patientID)
         dataframes.append(df)
 
     features_df = pd.concat(dataframes)
-
-    return features_df
+    pd.DataFrame.to_csv(
+        features_df, os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_shape.csv")
+    )
 
 
 def calculate_GLCM_features(patient_group, filepath, mute=True):
@@ -214,5 +234,4 @@ if __name__ == '__main__':
     huh_group = StudyGroup("HUH")
     huh_group.add_HUH_patients(huh_path)
 
-    calculate_firstorder_features(lung1_group, lung1_path, filetype="TCIA", mute=False)
-    calculate_firstorder_features(huh_group, huh_path, filetype="HUH", mute=False)
+    calculate_shape_features(huh_group, huh_path, filetype="HUH", mute=False)
