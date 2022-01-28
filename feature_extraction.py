@@ -287,4 +287,4 @@ if __name__ == '__main__':
     huh_group = StudyGroup("HUH")
     huh_group.add_HUH_patients(huh_path)
 
-    calculate_HLHGLRLM_features(huh_group, huh_path, filetype="HUH", struc="GTVp", mute=False)
+    calculate_GLRLM_features(lung1_group, lung1_path, filetype="TCIA", struc="GTVp", mute=False)
