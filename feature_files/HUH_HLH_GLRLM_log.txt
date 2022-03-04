@@ -1,0 +1,287 @@
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 14 bins for bin width 25 with edges: [-175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.
+  125.  150.  175.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 13, 15, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 23 bins for bin width 25 with edges: [-275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.
+   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 22, 21, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 27 bins for bin width 25 with edges: [-300. -275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.
+    0.   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.
+  300.  325.  350.  375.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 24, 22, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 24 bins for bin width 25 with edges: [-275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.
+   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.
+  325.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 23, 19, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 23 bins for bin width 25 with edges: [-275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.
+   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 22, 26, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 15 bins for bin width 25 with edges: [-175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.
+  125.  150.  175.  200.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 14, 6, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 25 bins for bin width 25 with edges: [-250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.
+   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.  325.
+  350.  375.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 24, 15, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 19 bins for bin width 25 with edges: [-225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.
+   75.  100.  125.  150.  175.  200.  225.  250.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 18, 21, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 23 bins for bin width 25 with edges: [-275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.
+   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 22, 12, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 25 bins for bin width 25 with edges: [-300. -275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.
+    0.   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.
+  300.  325.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 23, 14, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 21 bins for bin width 25 with edges: [-225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.
+   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 20, 13, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 24 bins for bin width 25 with edges: [-275. -250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.
+   25.   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.
+  325.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 23, 23, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 26 bins for bin width 25 with edges: [-350. -325. -300. -275. -250. -225. -200. -175. -150. -125. -100.  -75.
+  -50.  -25.    0.   25.   50.   75.  100.  125.  150.  175.  200.  225.
+  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 24, 19, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 20 bins for bin width 25 with edges: [-225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.
+   75.  100.  125.  150.  175.  200.  225.  250.  275.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 18, 23, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 23 bins for bin width 25 with edges: [-250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.
+   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.  325.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 22, 20, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 17 bins for bin width 25 with edges: [-175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.
+  125.  150.  175.  200.  225.  250.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 15, 16, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 22 bins for bin width 25 with edges: [-250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.
+   50.   75.  100.  125.  150.  175.  200.  225.  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 21, 20, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 17 bins for bin width 25 with edges: [-200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.
+  100.  125.  150.  175.  200.  225.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 16, 19, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 16 bins for bin width 25 with edges: [-175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.
+  125.  150.  175.  200.  225.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 15, 15, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 18 bins for bin width 25 with edges: [-225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.
+   75.  100.  125.  150.  175.  200.  225.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 17, 13, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 15 bins for bin width 25 with edges: [-150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.  125.
+  150.  175.  200.  225.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 14, 15, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 24 bins for bin width 25 with edges: [-350. -325. -300. -275. -250. -225. -200. -175. -150. -125. -100.  -75.
+  -50.  -25.    0.   25.   50.   75.  100.  125.  150.  175.  200.  225.
+  250.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 22, 20, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 18 bins for bin width 25 with edges: [-200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.
+  100.  125.  150.  175.  200.  225.  250.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 17, 15, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 16 bins for bin width 25 with edges: [-200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.
+  100.  125.  150.  175.  200.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 15, 20, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 17 bins for bin width 25 with edges: [-225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.
+   75.  100.  125.  150.  175.  200.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 16, 22, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 14 bins for bin width 25 with edges: [-150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.  125.
+  150.  175.  200.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 13, 13, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 19 bins for bin width 25 with edges: [-175. -150. -125. -100.  -75.  -50.  -25.    0.   25.   50.   75.  100.
+  125.  150.  175.  200.  225.  250.  275.  300.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 16, 18, 13)
+DEBUG:radiomics.glrlm: Calculating features
+DEBUG:radiomics.glrlm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 20 bins for bin width 25 with edges: [-250. -225. -200. -175. -150. -125. -100.  -75.  -50.  -25.    0.   25.
+   50.   75.  100.  125.  150.  175.  200.  225.  250.])
+DEBUG:radiomics.glrlm: Calculating GLRLM matrix in C
+DEBUG:radiomics.glrlm: Process calculated matrix
+DEBUG:radiomics.glrlm: No empty angles
+DEBUG:radiomics.glrlm: Calculating GLRLM coefficients
+DEBUG:radiomics.glrlm: GLRLM feature class initialized, calculated GLRLM with shape (1, 19, 17, 13)
+DEBUG:radiomics.glrlm: Calculating features

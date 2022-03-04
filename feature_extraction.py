@@ -203,7 +203,6 @@ def calculate_GLRLM_features(patient_group, filepath, filetype, struc, mute=True
     )
 
 
-# TODO This function is different and need a little different adaption
 def calculate_HLHGLRLM_features(patient_group, filepath, filetype, struc, mute=True):
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -287,4 +286,3 @@ if __name__ == '__main__':
     huh_group = StudyGroup("HUH")
     huh_group.add_HUH_patients(huh_path)
 
-    calculate_shape_features(lung1_group, lung1_path, filetype="TCIA", mute=False)

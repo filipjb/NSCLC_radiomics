@@ -1,0 +1,411 @@
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 42 bins for bin width 25 with edges: [  75  100  125  150  175  200  225  250  275  300  325  350  375  400
+  425  450  475  500  525  550  575  600  625  650  675  700  725  750
+  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100
+ 1125])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 41, 41, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 57 bins for bin width 25 with edges: [  50   75  100  125  150  175  200  225  250  275  300  325  350  375
+  400  425  450  475  500  525  550  575  600  625  650  675  700  725
+  750  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075
+ 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425
+ 1450 1475])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 56, 56, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 82 bins for bin width 25 with edges: [  75  100  125  150  175  200  225  250  275  300  325  350  375  400
+  425  450  475  500  525  550  575  600  625  650  675  700  725  750
+  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100
+ 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425 1450
+ 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725 1750 1775 1800
+ 1825 1850 1875 1900 1925 1950 1975 2000 2025 2050 2075 2100 2125])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 74, 74, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 75 bins for bin width 25 with edges: [   0   25   50   75  100  125  150  175  200  225  250  275  300  325
+  350  375  400  425  450  475  500  525  550  575  600  625  650  675
+  700  725  750  775  800  825  850  875  900  925  950  975 1000 1025
+ 1050 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375
+ 1400 1425 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725
+ 1750 1775 1800 1825 1850 1875])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 65, 65, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 78 bins for bin width 25 with edges: [   0   25   50   75  100  125  150  175  200  225  250  275  300  325
+  350  375  400  425  450  475  500  525  550  575  600  625  650  675
+  700  725  750  775  800  825  850  875  900  925  950  975 1000 1025
+ 1050 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375
+ 1400 1425 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725
+ 1750 1775 1800 1825 1850 1875 1900 1925 1950])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 77, 77, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 39 bins for bin width 25 with edges: [ 100  125  150  175  200  225  250  275  300  325  350  375  400  425
+  450  475  500  525  550  575  600  625  650  675  700  725  750  775
+  800  825  850  875  900  925  950  975 1000 1025 1050 1075])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 38, 38, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 68 bins for bin width 25 with edges: [  50   75  100  125  150  175  200  225  250  275  300  325  350  375
+  400  425  450  475  500  525  550  575  600  625  650  675  700  725
+  750  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075
+ 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425
+ 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725 1750])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 67, 67, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 54 bins for bin width 25 with edges: [   0   25   50   75  100  125  150  175  200  225  250  275  300  325
+  350  375  400  425  450  475  500  525  550  575  600  625  650  675
+  700  725  750  775  800  825  850  875  900  925  950  975 1000 1025
+ 1050 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 50, 50, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 74 bins for bin width 25 with edges: [ 100  125  150  175  200  225  250  275  300  325  350  375  400  425
+  450  475  500  525  550  575  600  625  650  675  700  725  750  775
+  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125
+ 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425 1450 1475
+ 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725 1750 1775 1800 1825
+ 1850 1875 1900 1925 1950])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 67, 67, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 79 bins for bin width 25 with edges: [  25   50   75  100  125  150  175  200  225  250  275  300  325  350
+  375  400  425  450  475  500  525  550  575  600  625  650  675  700
+  725  750  775  800  825  850  875  900  925  950  975 1000 1025 1050
+ 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400
+ 1425 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725 1750
+ 1775 1800 1825 1850 1875 1900 1925 1950 1975 2000])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 72, 72, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 46 bins for bin width 25 with edges: [  75  100  125  150  175  200  225  250  275  300  325  350  375  400
+  425  450  475  500  525  550  575  600  625  650  675  700  725  750
+  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100
+ 1125 1150 1175 1200 1225])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 45, 45, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 73 bins for bin width 25 with edges: [  25   50   75  100  125  150  175  200  225  250  275  300  325  350
+  375  400  425  450  475  500  525  550  575  600  625  650  675  700
+  725  750  775  800  825  850  875  900  925  950  975 1000 1025 1050
+ 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400
+ 1425 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725 1750
+ 1775 1800 1825 1850])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 70, 70, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 44 bins for bin width 25 with edges: [ 100  125  150  175  200  225  250  275  300  325  350  375  400  425
+  450  475  500  525  550  575  600  625  650  675  700  725  750  775
+  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125
+ 1150 1175 1200])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 43, 43, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 67 bins for bin width 25 with edges: [  25   50   75  100  125  150  175  200  225  250  275  300  325  350
+  375  400  425  450  475  500  525  550  575  600  625  650  675  700
+  725  750  775  800  825  850  875  900  925  950  975 1000 1025 1050
+ 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400
+ 1425 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 59, 59, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 85 bins for bin width 25 with edges: [  75  100  125  150  175  200  225  250  275  300  325  350  375  400
+  425  450  475  500  525  550  575  600  625  650  675  700  725  750
+  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100
+ 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425 1450
+ 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725 1750 1775 1800
+ 1825 1850 1875 1900 1925 1950 1975 2000 2025 2050 2075 2100 2125 2150
+ 2175 2200])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 78, 78, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 65 bins for bin width 25 with edges: [  50   75  100  125  150  175  200  225  250  275  300  325  350  375
+  400  425  450  475  500  525  550  575  600  625  650  675  700  725
+  750  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075
+ 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425
+ 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 58, 58, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 50 bins for bin width 25 with edges: [ 100  125  150  175  200  225  250  275  300  325  350  375  400  425
+  450  475  500  525  550  575  600  625  650  675  700  725  750  775
+  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125
+ 1150 1175 1200 1225 1250 1275 1300 1325 1350])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 49, 49, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 51 bins for bin width 25 with edges: [  75  100  125  150  175  200  225  250  275  300  325  350  375  400
+  425  450  475  500  525  550  575  600  625  650  675  700  725  750
+  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100
+ 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 50, 50, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 50 bins for bin width 25 with edges: [   0   25   50   75  100  125  150  175  200  225  250  275  300  325
+  350  375  400  425  450  475  500  525  550  575  600  625  650  675
+  700  725  750  775  800  825  850  875  900  925  950  975 1000 1025
+ 1050 1075 1100 1125 1150 1175 1200 1225 1250])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 49, 49, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 45 bins for bin width 25 with edges: [ 100  125  150  175  200  225  250  275  300  325  350  375  400  425
+  450  475  500  525  550  575  600  625  650  675  700  725  750  775
+  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125
+ 1150 1175 1200 1225])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 44, 44, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 45 bins for bin width 25 with edges: [  75  100  125  150  175  200  225  250  275  300  325  350  375  400
+  425  450  475  500  525  550  575  600  625  650  675  700  725  750
+  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100
+ 1125 1150 1175 1200])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 44, 44, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 67 bins for bin width 25 with edges: [  50   75  100  125  150  175  200  225  250  275  300  325  350  375
+  400  425  450  475  500  525  550  575  600  625  650  675  700  725
+  750  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075
+ 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400 1425
+ 1450 1475 1500 1525 1550 1575 1600 1625 1650 1675 1700 1725])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 63, 63, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 48 bins for bin width 25 with edges: [ 125  150  175  200  225  250  275  300  325  350  375  400  425  450
+  475  500  525  550  575  600  625  650  675  700  725  750  775  800
+  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125 1150
+ 1175 1200 1225 1250 1275 1300 1325])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 47, 47, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 54 bins for bin width 25 with edges: [  50   75  100  125  150  175  200  225  250  275  300  325  350  375
+  400  425  450  475  500  525  550  575  600  625  650  675  700  725
+  750  775  800  825  850  875  900  925  950  975 1000 1025 1050 1075
+ 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 52, 52, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 43 bins for bin width 25 with edges: [ 125  150  175  200  225  250  275  300  325  350  375  400  425  450
+  475  500  525  550  575  600  625  650  675  700  725  750  775  800
+  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125 1150
+ 1175 1200])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 41, 41, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 41 bins for bin width 25 with edges: [ 125  150  175  200  225  250  275  300  325  350  375  400  425  450
+  475  500  525  550  575  600  625  650  675  700  725  750  775  800
+  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125 1150])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 40, 40, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 46 bins for bin width 25 with edges: [ 100  125  150  175  200  225  250  275  300  325  350  375  400  425
+  450  475  500  525  550  575  600  625  650  675  700  725  750  775
+  800  825  850  875  900  925  950  975 1000 1025 1050 1075 1100 1125
+ 1150 1175 1200 1225 1250])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 45, 45, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
+DEBUG:radiomics.glcm: Initializing feature class
+DEBUG:radiomics.imageoperations: Discretizing gray levels inside ROI
+DEBUG:radiomics.imageoperations: Calculated 56 bins for bin width 25 with edges: [  25   50   75  100  125  150  175  200  225  250  275  300  325  350
+  375  400  425  450  475  500  525  550  575  600  625  650  675  700
+  725  750  775  800  825  850  875  900  925  950  975 1000 1025 1050
+ 1075 1100 1125 1150 1175 1200 1225 1250 1275 1300 1325 1350 1375 1400
+ 1425])
+DEBUG:radiomics.glcm: Calculating GLCM matrix in C
+DEBUG:radiomics.glcm: Process calculated matrix
+DEBUG:radiomics.glcm: Create symmetrical matrix
+DEBUG:radiomics.glcm: No empty angles
+DEBUG:radiomics.glcm: Calculating GLCM coefficients
+DEBUG:radiomics.glcm: GLCM feature class initialized, calculated GLCM with shape (1, 54, 54, 13)
+DEBUG:radiomics.glcm: Calculating features
+WARNING:radiomics.glcm: GLCM is symmetrical, therefore Sum Average = 2 * Joint Average, only 1 needs to be calculated
