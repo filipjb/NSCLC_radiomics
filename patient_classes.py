@@ -408,6 +408,10 @@ class StudyGroup:
             if patient.patientID == patientid:
                 self.patients.remove(patient)
 
+    def remove_multiple_patients(self, patients: list):
+        for name in patients:
+            self.remove_patient(name)
+
     @staticmethod
     # A private function made for writing the two methods for adding either all patients or
     # some specific patients a little more compact
@@ -618,6 +622,34 @@ class StudyGroup:
             stage3a * 100 / (self.size() - invalid), stage3b * 100 / (self.size() - invalid)
         ]
 
+    def print_statistics(self):
+        T = self.relative_frequency_Tstages()
+        N = self.relative_frequency_Nstages()
+        TNM = self.relative_frequency_TNM()
+
+        print("Males: ", self.relative_frequency_males())
+        print("Females: ", self.relative_frequency_females())
+
+        print("Mean age", self.mean_age())
+        print("Age range", self.age_range())
+        print()
+        print("T1:", T[0])
+        print("T2:", T[1])
+        print("T3:", T[2])
+        print("T4:", T[3])
+        print("Tx:", T[4])
+        print("T Sum:", sum(T))
+        print()
+        print("N0:", N[0])
+        print("N1:", N[1])
+        print("N2:", N[2])
+        print("N3:", N[3])
+        print("Nx:", N[4])
+        print("N Sum:", sum(N))
+        print()
+        print("TNM:", TNM)
+        print("TNM sum:", sum(TNM))
+
 
 def slice_viewer(array):
     plt.gray()
@@ -639,14 +671,11 @@ if __name__ == '__main__':
     csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
-    lung1_group = StudyGroup()
+    lung1_group = StudyGroup("lung1")
     lung1_group.add_all_patients(csv_path)
+    lung1_group.remove_multiple_patients(disq_patients)
 
-    huh_group = StudyGroup()
+    huh_group = StudyGroup("huh")
     huh_group.add_HUH_patients(path=huh_path)
 
-    # TODO
-    #  *Segmentations and CT must be read at the same time for Haukeland images, make a single function
-    #   that returns two arrays; one of CT images and one of segmentation masks
-    #   -Maybe adapt TCIA functions into this single-function structure as well, if doable
-    #  *Figure out have to make customizable Kaplan-Meier plots
+    lung1_group.print_statistics()

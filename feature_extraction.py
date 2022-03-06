@@ -8,7 +8,6 @@ import radiomics
 from patient_classes import Patient, StudyGroup
 from radiomics import firstorder, shape, glcm, glrlm
 import SimpleITK as sitk
-from main import remove_disqualified_patients
 import pywt
 
 # Settings for the feature extractors, where at least the binWidth is confirmed to be 25 in the study
@@ -280,7 +279,7 @@ if __name__ == '__main__':
     # Initiating lung1 studygroup, adding all patients, and removing those that are excluded
     lung1_group = StudyGroup("lung1")
     lung1_group.add_all_patients(lung1_csv)
-    remove_disqualified_patients(lung1_group, disq_patients)
+    lung1_group.remove_multiple_patients(disq_patients)
 
     # Initiating HUH group
     huh_group = StudyGroup("HUH")
