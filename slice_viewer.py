@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from pydicom import dcmread
 
 # A scroll-wheel controlled sliceviewer that views 3d numpy arrays
 # taking the 1st dimension of the arrays as the different slices
 # retrieved from:
 # https://matplotlib.org/3.3.0/gallery/event_handling/image_slices_viewer.html
+# Adapted to work with rgb images
 
 
 class IndexTracker:
@@ -44,16 +44,3 @@ class IndexTracker:
 
         self.ax.set_ylabel('slice %s' % self.ind)
         self.im.axes.figure.canvas.draw()
-
-
-if __name__ == '__main__':
-
-    plt.gray()
-
-    fig, ax = plt.subplots(1, 1)
-    # X is the 3D array of slices we want to examine
-    #X = slices
-    tracker = IndexTracker(ax, X)
-
-    fig.canvas.mpl_connect('scroll_event', tracker.on_scroll)
-    plt.show()

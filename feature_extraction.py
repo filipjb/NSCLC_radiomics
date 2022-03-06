@@ -266,22 +266,3 @@ def calculate_HLHGLRLM_features(patient_group, filepath, filetype, struc, mute=T
             features_df, os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_HLH_GLRLM.csv")
         )
 
-
-if __name__ == '__main__':
-
-    lung1_csv = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
-    lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
-    huh_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
-    # 014, 021, 085, 095 and 194 are excluded due errors in the files provided for these patients, 128 is excluded
-    # due to no segmentatiion file being provded at all (post-operative case, acounted for in study)
-    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
-
-    # Initiating lung1 studygroup, adding all patients, and removing those that are excluded
-    lung1_group = StudyGroup("lung1")
-    lung1_group.add_all_patients(lung1_csv)
-    lung1_group.remove_multiple_patients(disq_patients)
-
-    # Initiating HUH group
-    huh_group = StudyGroup("HUH")
-    huh_group.add_HUH_patients(huh_path)
-

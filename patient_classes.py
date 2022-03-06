@@ -651,18 +651,6 @@ class StudyGroup:
         print("TNM sum:", sum(TNM))
 
 
-def slice_viewer(array):
-    plt.gray()
-    # Slice viewer:
-    fig, ax = plt.subplots(1, 1)
-    # Second argument of IndexTracker() is the array we want to
-    # examine
-    tracker = IndexTracker(ax, array)
-    fig.canvas.mpl_connect("scroll_event", tracker.on_scroll)
-
-    plt.show()
-
-
 # This block is for debugging
 if __name__ == '__main__':
 
@@ -679,3 +667,4 @@ if __name__ == '__main__':
     huh_group.add_HUH_patients(path=huh_path)
 
     lung1_group.print_statistics()
+    lung1_group[0].view_segmentations(lung1_path)
