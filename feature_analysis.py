@@ -9,22 +9,33 @@ lung1_clinical = pd.read_csv(
 )
 disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 
+# Removing the patients in Lung1 that were disqualified
 for i in disq_patients:
     lung1_clinical = lung1_clinical.drop(lung1_clinical[lung1_clinical.PatientID == i].index[0])
 
-
-
 df = pd.merge(lung1_shape, lung1_clinical, on='PatientID', how='outer')
 
-df1 = df[df["deadstatus.event"] == 1]
-df2 = df[df["deadstatus.event"] == 0]
 
-time = df["Survival.time"]
-censoring = df["deadstatus.event"]
-labx = df["Compactness2"] > df["Compactness2"].median()
+def plot_km(dataframe, parameter, threshtype="median"):
 
-out = km.fit(time, censoring, labx)
-km.plot(out)
-plt.show()
+
+
+    df1 = df[df["deadstatus.event"] == 1]
+    df2 = df[df["deadstatus.event"] == 0]
+
+    time = df["Survival.time"]
+    censoring = df["deadstatus.event"]
+    labx = df["Compactness2"] > df["Compactness2"].median()
+
+    out = km.fit(time, censoring, labx)
+    km.plot(out)
+    plt.show()
+
+
+
+
+
+
+
 
 
