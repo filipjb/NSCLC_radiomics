@@ -10,7 +10,8 @@ from radiomics import firstorder, shape, glcm, glrlm
 import SimpleITK as sitk
 import pywt
 
-# Settings for the feature extractors, where at least the binWidth is confirmed to be 25 in the study
+# Settings for the feature extractors, resampling is disabled by default so last two
+# options can be ignored
 settings = {'binWidth': 25,
             'interpolator': sitk.sitkBSpline,
             'resampledPixelSpacing': None}
@@ -45,9 +46,9 @@ def calculate_firstorder_features(patient_group, filepath, filetype, struc="GTVp
         print(f"\nCalculating first-order features for patient {patient}")
 
         # Enabling features and extracting firstorder radiomic feature values
-        firstorder_features = firstorder.RadiomicsFirstOrder(images, masks)
+        firstorder_features = firstorder.RadiomicsFirstOrder(images, masks, **settings)
         firstorder_features.enableAllFeatures()
-        # Standard deviation is not enabled by enableAllFeatures due to realation to other features
+        # Standard deviation is not enabled by enableAllFeatures due to correlation with other features
         firstorder_features.enableFeatureByName("StandardDeviation", True)
         firstorder_features.execute()
 
@@ -265,4 +266,3 @@ def calculate_HLHGLRLM_features(patient_group, filepath, filetype, struc, mute=T
     pd.DataFrame.to_csv(
             features_df, os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_HLH_GLRLM.csv")
         )
-
