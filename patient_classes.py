@@ -508,7 +508,7 @@ class StudyGroup:
             # There is a single patient which has "NA" overall stage, and
             # coincidentally has a T stage of 5, which seems to have netted the
             # patient of being placed in the overall stage IIIb when the statistics
-            # have been calculated
+            # have been calculated in Aerts et al.
             else:
                 stage3b += 1
         return [
@@ -551,11 +551,13 @@ if __name__ == '__main__':
     lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
     huh_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
     csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
-    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
+    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-128", "LUNG1-194"]
 
-    lung1_group = StudyGroup("lung1")
-    lung1_group.add_all_patients(csv_path)
-    lung1_group.remove_multiple_patients(disq_patients)
+    lung1: StudyGroup = StudyGroup("lung1")
+    lung1.add_all_patients(csv_path)
+    lung1.remove_multiple_patients(disq_patients)
 
-    huh_group = StudyGroup("huh")
-    huh_group.add_HUH_patients(path=huh_path)
+    huh = StudyGroup("huh")
+    huh.add_HUH_patients(path=huh_path)
+
+    lung1.print_statistics()
