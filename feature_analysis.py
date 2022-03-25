@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
+import numpy as np
+import seaborn as sns
 
 
 def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
@@ -34,6 +36,31 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     plt.show()
 
 
+def plot_signature_km(firstorder, shape, texture, wavelet):
+    pass
+
+# TODO klarer vi å skrive denne slik at den takler histology/strings og?
+def compare_histograms(df, feature: str, clinical: str):
+    # TODO også gjennomføre en test her for å kvantifisere forskjell mellom de to fordelingene?
+    thresh = df[feature].median()
+    df1 = df[df[feature] <= thresh]
+    df2 = df[df[feature] > thresh]
+
+    df1 = df1[clinical]
+    df2 = df2[clinical]
+
+    n = df.nunique(axis=0)[clinical]
+    binning = np.arange(-0.5, n+1, 1)
+    lab = [f"{feature} <= thresh", f"{feature} > thresh"]
+
+    plt.hist([df1, df2], bins=binning, color=["b", "r"], rwidth=0.5, label=lab)
+    plt.title(f"{clinical} above and below the median value of {feature}")
+    plt.xlabel(clinical)
+    plt.ylabel("n")
+    plt.legend()
+    plt.show()
+
+
 if __name__ == '__main__':
 
     lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
@@ -54,7 +81,7 @@ if __name__ == '__main__':
         r"NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
     )
     disq_lung1 = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
-    for i in disq_lung1:  # Removing disqualified patients from clinical df
+    for i in disq_lung1:
         lung1_clinical = lung1_clinical.drop(lung1_clinical[lung1_clinical.PatientID == i].index[0])
 
     disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH"]
@@ -71,4 +98,4 @@ if __name__ == '__main__':
     huh_glrlm = pd.merge(huh_glrlm, huh_clinical, on="PatientID", how="inner")
     huh_hlh = pd.merge(huh_hlh, huh_clinical, on="PatientID", how="inner")
 
-    
+    compare_histograms(lung1_firstorder, "Energy", "Clinical.N.Stage")
