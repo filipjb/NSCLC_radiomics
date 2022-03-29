@@ -5,6 +5,7 @@ from lifelines.statistics import logrank_test
 import numpy as np
 from lifelines import CoxPHFitter
 import re
+from scipy.stats import ks_2samp
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
 lung1_shape = pd.read_csv(r"feature_files\lung1_shape.csv")
@@ -108,6 +109,8 @@ def compare_histograms(df1, df2, featurename):
     df2 = df2[featurename]
     minimum = min(df1.min(), df2.min())
     maximum = max(df1.max(), df2.max())
+    # Kolmogorov-Smirnov test
+    stat, p = ks_2samp(df1, df2)
 
     binning = np.linspace(minimum, maximum, 30)
     fig, ax = plt.subplots()
@@ -115,17 +118,35 @@ def compare_histograms(df1, df2, featurename):
     ax.hist(df2, density=True, alpha=0.7, bins=binning, edgecolor="black", label=label2)
     fig.set_figwidth(8)
     fig.set_figheight(5)
-    plt.title(f"{featurename}")
+    plt.title(f"{featurename}, KS-statistic = {stat.__round__(5)}, p-value = {p.__round__(5)}")
 
     plt.legend()
     plt.show()
 
 
+def test_all_features(df1, df2):
+    df1 = df1.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
+                    "Survival.time", "Unnamed: 0", "Clinical.M.Stage"], axis=1)
+    df2 = df2.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
+                    "Survival.time", "Unnamed: 0", "Clinical.M.Stage"], axis=1)
+
+    result = dict()
+    for col in df1:
+        col1 = df1[col]
+        col2 = df2[col]
+        stat, p = ks_2samp(col1, col2)
+        result.update({col: p})
+    result = dict(sorted(result.items(), key=lambda x:x[1]))
+
+    fig, ax = plt.subplots()
+    bars = ax.barh(list(result.keys()), list(result.values()), edgecolor="black")
+    plt.xlabel("p-value")
+    ax.bar_label(bars)
+    plt.show()
+    return result
 
 
-# TODO klarer vi å skrive denne slik at den takler histology/strings og?
 def thresholded_histograms(df, feature: str, clinical: str):
-    # TODO også gjennomføre en test her for å kvantifisere forskjell mellom de to fordelingene?
     thresh = df[feature].median()
     df1 = df[df[feature] <= thresh]
     df2 = df[df[feature] > thresh]
@@ -147,7 +168,4 @@ def thresholded_histograms(df, feature: str, clinical: str):
 
 if __name__ == '__main__':
 
-    compare_histograms(lung1_firstorder, huh_firstorder, "Energy")
-    compare_histograms(lung1_shape, huh_shape, "Compactness2")
-    compare_histograms(lung1_glrlm, huh_glrlm, "GrayLevelNonUniformity")
-    compare_histograms(lung1_hlh, huh_hlh, "HLH GrayLevelNonUniformity")
+    
