@@ -6,6 +6,7 @@ import numpy as np
 from lifelines import CoxPHFitter
 import re
 from scipy.stats import ks_2samp
+from matplotlib.legend import Legend
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
 lung1_shape = pd.read_csv(r"feature_files\lung1_shape.csv")
@@ -43,8 +44,54 @@ huh_glrlm = pd.merge(huh_glrlm, huh_clinical, on="PatientID", how="inner")
 huh_hlh = pd.merge(huh_hlh, huh_clinical, on="PatientID", how="inner")
 
 
-def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
+def compare_km(feature: str):
+    if feature == "Energy":
+        ref_over = pd.read_csv("automeris_coords/lung1energy_overmedian.csv", delimiter=";", decimal=",",
+                               header=None)
+        ref_under = pd.read_csv("automeris_coords/lung1energy_undermedian.csv", delimiter=";", decimal=",",
+                                header=None)
+        df = lung1_firstorder
 
+    if feature == "Compactness2":
+        ref_over = pd.read_csv("automeris_coords/lung1compactness_overmedian.csv", delimiter=";", decimal=",",
+                               header=None)
+        ref_under = pd.read_csv("automeris_coords/lung1compactness_undermedian.csv", delimiter=";", decimal=",",
+                                header=None)
+        df = lung1_shape
+
+    if feature == "GrayLevelNonUniformity":
+        ref_over = pd.read_csv("automeris_coords/lung1glnu_overmedian.csv", delimiter=";", decimal=",",
+                               header=None)
+        ref_under = pd.read_csv("automeris_coords/lung1glnu_undermedian.csv", delimiter=";", decimal=",",
+                                header=None)
+        df = lung1_glrlm
+
+    if feature == "HLH GrayLevelNonUniformity":
+        ref_over = pd.read_csv("automeris_coords/lung1hlhglnu_overmedian.csv", delimiter=";", decimal=",",
+                               header=None)
+        ref_under = pd.read_csv("automeris_coords/lung1hlhglnu_undermedian.csv", delimiter=";", decimal=",",
+                                header=None)
+        df = lung1_hlh
+
+    l1, l2 = plot_km(df, feature, df[feature].median(), "Lung1")
+
+    l3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
+    l4, = plt.plot(ref_under[0], ref_under[1], color="red")
+
+    plt.gca().legend([l1, l4], ["Validation", "Aerts et al."], loc=1)
+
+    leg = Legend(plt.gca(), [l4, l3], ["<= median", "> median"], loc=3)
+    plt.gca().add_artist(leg)
+
+    plt.title("title")
+    lines = leg.get_lines()
+    for l in lines:
+        l.set_color("black")
+
+    plt.show()
+
+
+def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     group1 = dataframe[dataframe[parameter] > threshold]
     group2 = dataframe[dataframe[parameter] <= threshold]
 
@@ -54,23 +101,27 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     e2 = group2["deadstatus.event"]
 
     kmf = KaplanMeierFitter()
+    fig, ax = plt.subplots()
 
-    kmf.fit(t1, e1, label=f"{parameter} > median")
+    kmf.fit(t1, e1)
+    l2, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue", linestyle="--")
 
-    ax = kmf.plot_survival_function(ci_show=False, color="blue")
-    ax.set_xlim(0, xlim)
-
-    kmf.fit(t2, e2, label=f"{parameter} <= median")
-    kmf.plot_survival_function(ax=ax, ci_show=False, color="red")
+    kmf.fit(t2, e2)
+    l1, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue")
 
     lr_result = logrank_test(t1, t2, e1, e2)
     pval = lr_result.p_value
 
+    plt.gca().set_xlim(0, xlim)
+    plt.gca().legend([l1, l2], ["<= median", "> median"])
     plt.title(f"{groupname} {parameter}, Logrank P-value = {pval.__round__(5)}")
     plt.ylabel("Survival probability")
     plt.xlabel("Survival time (days)")
 
-    plt.show()
+    fig.set_figwidth(8)
+    fig.set_figheight(5)
+
+    return l1, l2
 
 
 def signature_cox_model():
@@ -88,7 +139,6 @@ def signature_cox_model():
     fitter.print_summary()
     fitter.plot()
     plt.show()
-
 
 
 def plot_signature_km(firstorder, shape, texture, wavelet):
@@ -136,7 +186,7 @@ def test_all_features(df1, df2):
         col2 = df2[col]
         stat, p = ks_2samp(col1, col2)
         result.update({col: p})
-    result = dict(sorted(result.items(), key=lambda x:x[1]))
+    result = dict(sorted(result.items(), key=lambda x: x[1]))
 
     fig, ax = plt.subplots()
     bars = ax.barh(list(result.keys()), list(result.values()), edgecolor="black")
@@ -155,7 +205,7 @@ def thresholded_histograms(df, feature: str, clinical: str):
     df2 = df2[clinical]
 
     n = df.nunique(axis=0)[clinical]
-    binning = np.arange(-0.5, n+1, 1)
+    binning = np.arange(-0.5, n + 1, 1)
     lab = [f"{feature} <= median", f"{feature} > median"]
 
     plt.hist([df1, df2], bins=binning, color=["b", "r"], rwidth=0.5, label=lab)
@@ -167,4 +217,6 @@ def thresholded_histograms(df, feature: str, clinical: str):
 
 
 if __name__ == '__main__':
-
+    compare_km("Energy")
+    #plot_km(lung1_firstorder, "Energy", lung1_firstorder["Energy"].median(), "Lung1")
+    plt.show()
