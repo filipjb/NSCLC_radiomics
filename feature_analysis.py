@@ -73,17 +73,25 @@ def compare_km(feature: str):
                                 header=None)
         df = lung1_hlh
 
-    l1, l2 = plot_km(df, feature, df[feature].median(), "Lung1")
+    l1, l2, xover, xunder = plot_km(df, feature, df[feature].median(), "Lung1")
 
     l3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
     l4, = plt.plot(ref_under[0], ref_under[1], color="red")
 
-    plt.gca().legend([l1, l4], ["Validation", "Aerts et al."], loc=1)
+    plt.gca().legend([l2, l4], ["Validation", "Aerts et al."], loc=1)
 
     leg = Legend(plt.gca(), [l4, l3], ["<= median", "> median"], loc=3)
     plt.gca().add_artist(leg)
 
-    plt.title("title")
+    lr12 = logrank_test(xunder, xover)
+    llr12 = logrank_test(l1.get_data()[0], l2.get_data()[0])
+    lr34 = logrank_test(ref_over[0], ref_under[0])
+    llr34 = logrank_test(l3.get_data()[0], l4.get_data()[0])
+    lr13 = logrank_test(xover, ref_over[0])
+    print(lr13)
+
+
+    plt.title(f"{feature}")
     lines = leg.get_lines()
     for l in lines:
         l.set_color("black")
@@ -104,16 +112,23 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     fig, ax = plt.subplots()
 
     kmf.fit(t1, e1)
-    l2, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue", linestyle="--")
+    xover = kmf.survival_function_.index
+    l1, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue",
+                   linestyle="--", label="> median")
 
     kmf.fit(t2, e2)
-    l1, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue")
+    xunder = kmf.survival_function_.index
+    l2, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue",
+                   label="<= median")
 
+    # TODO i værste fall kan denne lr testen brukes som et nøyaktiv mål på forskjelle mellom kurvene
+    #  og la det være med at tester utført direkte på kurvene er upålitelige
     lr_result = logrank_test(t1, t2, e1, e2)
     pval = lr_result.p_value
 
     plt.gca().set_xlim(0, xlim)
-    plt.gca().legend([l1, l2], ["<= median", "> median"])
+    #plt.gca().legend([l2, l1], ["<= median", "> median"])
+    plt.legend()
     plt.title(f"{groupname} {parameter}, Logrank P-value = {pval.__round__(5)}")
     plt.ylabel("Survival probability")
     plt.xlabel("Survival time (days)")
@@ -121,7 +136,7 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     fig.set_figwidth(8)
     fig.set_figheight(5)
 
-    return l1, l2
+    return l1, l2, xover, xunder
 
 
 def signature_cox_model():
