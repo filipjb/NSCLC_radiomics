@@ -29,7 +29,7 @@ disq_lung1 = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "
 for i in disq_lung1:
     lung1_clinical = lung1_clinical.drop(lung1_clinical[lung1_clinical.PatientID == i].index[0])
 
-disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH"]
+disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH", "14_radiomics_HUH"]
 for i in disq_huh:
     huh_clinical = huh_clinical.drop(huh_clinical[huh_clinical.PatientID == i].index[0])
 
@@ -73,28 +73,23 @@ def compare_km(feature: str):
                                 header=None)
         df = lung1_hlh
 
-    l1, l2, xover, xunder = plot_km(df, feature, df[feature].median(), "Lung1")
+    lin1, lin2, xover, xunder = plot_km(df, feature, df[feature].median(), "Lung1")
 
-    l3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
-    l4, = plt.plot(ref_under[0], ref_under[1], color="red")
+    lin3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
+    lin4, = plt.plot(ref_under[0], ref_under[1], color="red")
 
-    plt.gca().legend([l2, l4], ["Validation", "Aerts et al."], loc=1)
+    plt.gca().legend([lin2, lin4], ["Validation", "Aerts et al."], loc=1)
 
-    leg = Legend(plt.gca(), [l4, l3], ["<= median", "> median"], loc=3)
+    leg = Legend(plt.gca(), [lin4, lin3], ["<= median", "> median"], loc=3)
     plt.gca().add_artist(leg)
 
-    lr12 = logrank_test(xunder, xover)
-    llr12 = logrank_test(l1.get_data()[0], l2.get_data()[0])
-    lr34 = logrank_test(ref_over[0], ref_under[0])
-    llr34 = logrank_test(l3.get_data()[0], l4.get_data()[0])
-    lr13 = logrank_test(xover, ref_over[0])
-    print(lr13)
-
+    ks13 = ks_2samp(lin1.get_xdata(), lin3.get_xdata())
+    print(ks13)
 
     plt.title(f"{feature}")
     lines = leg.get_lines()
-    for l in lines:
-        l.set_color("black")
+    for line in lines:
+        line.set_color("black")
 
     plt.show()
 
@@ -121,13 +116,12 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     l2, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue",
                    label="<= median")
 
-    # TODO i værste fall kan denne lr testen brukes som et nøyaktiv mål på forskjelle mellom kurvene
-    #  og la det være med at tester utført direkte på kurvene er upålitelige
+    # TODO if logrank test still unreliable, this test of our data can be used to quantify difference
     lr_result = logrank_test(t1, t2, e1, e2)
     pval = lr_result.p_value
 
     plt.gca().set_xlim(0, xlim)
-    #plt.gca().legend([l2, l1], ["<= median", "> median"])
+    # plt.gca().legend([l2, l1], ["<= median", "> median"])
     plt.legend()
     plt.title(f"{groupname} {parameter}, Logrank P-value = {pval.__round__(5)}")
     plt.ylabel("Survival probability")
@@ -136,7 +130,7 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     fig.set_figwidth(8)
     fig.set_figheight(5)
 
-    return l1, l2, xover, xunder
+    return l1, l2, t1, t2
 
 
 def signature_cox_model():
@@ -161,7 +155,6 @@ def plot_signature_km(firstorder, shape, texture, wavelet):
 
 
 # Comparing the histogram of a feature value across the two cohorts
-# TODO hopefull perform a test here to quantify difference between histograms
 def compare_histograms(df1, df2, featurename):
     if re.match("LUNG1", df1.iloc[0].PatientID):
         label1 = "Lung1"
@@ -172,6 +165,7 @@ def compare_histograms(df1, df2, featurename):
 
     df1 = df1[featurename]
     df2 = df2[featurename]
+
     minimum = min(df1.min(), df2.min())
     maximum = max(df1.max(), df2.max())
     # Kolmogorov-Smirnov test
@@ -232,6 +226,20 @@ def thresholded_histograms(df, feature: str, clinical: str):
 
 
 if __name__ == '__main__':
+
     compare_km("Energy")
+
     #plot_km(lung1_firstorder, "Energy", lung1_firstorder["Energy"].median(), "Lung1")
-    plt.show()
+
+    '''
+    compare_histograms(lung1_firstorder, huh_firstorder, "Energy")
+    compare_histograms(lung1_shape, huh_shape, "Compactness2")
+    compare_histograms(lung1_glrlm, huh_glrlm, "GrayLevelNonUniformity")
+    compare_histograms(lung1_hlh, huh_hlh, "HLH GrayLevelNonUniformity")
+    '''
+
+    #test_all_features(lung1_shape, huh_shape)
+    #plt.show()
+
+
+
