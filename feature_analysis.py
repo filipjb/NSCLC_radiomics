@@ -5,7 +5,7 @@ from lifelines.statistics import logrank_test
 import numpy as np
 from lifelines import CoxPHFitter
 import re
-from scipy.stats import ks_2samp
+from scipy.stats import ks_2samp, cramervonmises_2samp
 from matplotlib.legend import Legend
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
@@ -73,18 +73,19 @@ def compare_km(feature: str):
                                 header=None)
         df = lung1_hlh
 
-    lin1, lin2, xover, xunder = plot_km(df, feature, df[feature].median(), "Lung1")
+    lin1, lin2 = plot_km(df, feature, df[feature].median(), "Lung1")
 
     lin3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
     lin4, = plt.plot(ref_under[0], ref_under[1], color="red")
+
+
+    cvm13 = cramervonmises_2samp(lin1.get_xdata(), lin3.get_xdata())
+    print(cvm13)
 
     plt.gca().legend([lin2, lin4], ["Validation", "Aerts et al."], loc=1)
 
     leg = Legend(plt.gca(), [lin4, lin3], ["<= median", "> median"], loc=3)
     plt.gca().add_artist(leg)
-
-    ks13 = ks_2samp(lin1.get_xdata(), lin3.get_xdata())
-    print(ks13)
 
     plt.title(f"{feature}")
     lines = leg.get_lines()
@@ -107,12 +108,10 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     fig, ax = plt.subplots()
 
     kmf.fit(t1, e1)
-    xover = kmf.survival_function_.index
     l1, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue",
                    linestyle="--", label="> median")
 
     kmf.fit(t2, e2)
-    xunder = kmf.survival_function_.index
     l2, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"], color="blue",
                    label="<= median")
 
@@ -121,7 +120,7 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     pval = lr_result.p_value
 
     plt.gca().set_xlim(0, xlim)
-    # plt.gca().legend([l2, l1], ["<= median", "> median"])
+    plt.gca().legend([l2, l1], ["<= median", "> median"])
     plt.legend()
     plt.title(f"{groupname} {parameter}, Logrank P-value = {pval.__round__(5)}")
     plt.ylabel("Survival probability")
@@ -130,7 +129,7 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     fig.set_figwidth(8)
     fig.set_figheight(5)
 
-    return l1, l2, t1, t2
+    return l1, l2,
 
 
 def signature_cox_model():
@@ -229,7 +228,8 @@ if __name__ == '__main__':
 
     compare_km("Energy")
 
-    #plot_km(lung1_firstorder, "Energy", lung1_firstorder["Energy"].median(), "Lung1")
+    plot_km(lung1_firstorder, "Energy", lung1_firstorder["Energy"].median(), "Lung1")
+
 
     '''
     compare_histograms(lung1_firstorder, huh_firstorder, "Energy")
