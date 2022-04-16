@@ -94,7 +94,6 @@ class Patient:
             for filename in os.listdir(os.getcwd()):
                 dataset = dicom.dcmread(filename)
                 location = dataset.SliceLocation
-
                 image_array = dataset.pixel_array
                 # Fixing images not being consistent across patients with pixel intensity range
                 if np.min(image_array) < 0:
@@ -334,22 +333,22 @@ class StudyGroup:
     @staticmethod
     # A private function for making other methods more compact
     def __return_clinical_values(read_line):
-        if read_line[1] == "NA":
+        if read_line[1] == "NA" or read_line[1] == "":
             age = "NA"
         else:
             age = float(read_line[1])
 
-        if read_line[2] == "NA":
+        if read_line[2] == "NA" or read_line[2] == "":
             t_stage = "NA"
         else:
             t_stage = int(read_line[2])
 
-        if read_line[3] == "NA":
+        if read_line[3] == "NA" or read_line[3] == "":
             n_stage = "NA"
         else:
             n_stage = int(read_line[3])
 
-        if read_line[4] == "NA":
+        if read_line[4] == "NA" or read_line[4] == "":
             m_stage = "NA"
         else:
             m_stage = int(read_line[4])
@@ -360,12 +359,12 @@ class StudyGroup:
 
         gender = str(read_line[7])
 
-        if read_line[8] == "NA":
+        if read_line[8] == "NA" or read_line[8] == "":
             survival_time = "NA"
         else:
             survival_time = int(read_line[8])
 
-        if read_line[9] == "NA":
+        if read_line[9] == "NA" or read_line[9] == "":
             deadstatus = "NA"
         else:
             deadstatus = int(read_line[9])
@@ -373,6 +372,7 @@ class StudyGroup:
         return age, t_stage, n_stage, m_stage, overall_stage, histology, gender, survival_time, deadstatus
 
     # A method that can add HUH patients to the group using the directory containing the image data
+    # instead of csv
     def add_HUH_patients(self, path):
         os.chdir(path)
         for dirname in os.listdir(os.getcwd()):
@@ -382,9 +382,12 @@ class StudyGroup:
     def add_all_patients(self, path, pathtype="TCIA"):
         file = open(path, "r")
         for line in file.readlines()[1:]:
-            line = line.split(",")
+            line = line.strip()
+            if pathtype == "TCIA":
+                line = line.split(",")
+            elif pathtype == "HUH":
+                line = line.split(";")
             patient_id = str(line[0])
-
             age, t, n, m, o, hist, g, st, dead = self.__return_clinical_values(line)
             patient = Patient(patient_id, age, t, n, m, o, hist, g, st, dead)
             self.patients.append(patient)
@@ -501,11 +504,11 @@ class StudyGroup:
                 stage1 += 1
             elif patient.overall_stage == "II":
                 stage2 += 1
-            elif patient.overall_stage == "IIIa":
+            elif patient.overall_stage == "IIIa" or patient.overall_stage == "IIIA":
                 stage3a += 1
-            elif patient.overall_stage == "IIIb":
+            elif patient.overall_stage == "IIIb" or patient.overall_stage == "IIIB":
                 stage3b += 1
-            # There is a single patient which has "NA" overall stage, and
+            # There is a single patient which has "NA" overall stage in Lung1, and
             # coincidentally has a T stage of 5, which seems to have netted the
             # patient of being placed in the overall stage IIIb when the statistics
             # have been calculated in Aerts et al.
@@ -548,16 +551,20 @@ class StudyGroup:
 # This block is for debugging
 if __name__ == '__main__':
 
-    lung1_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC-Radiomics"
-    huh_path = r"C:\Users\filip\Desktop\radiomics_data\HUH_data"
-    csv_path = r"C:\Users\filip\Desktop\radiomics_data\NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
-    disq_patients = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-128", "LUNG1-194"]
+    lung1_path = r"C:\Users\filip\Downloads\radiomics_data\NSCLC-Radiomics"
+    huh_path = r"C:\Users\filip\Downloads\radiomics_data\HUH_data"
+    csv_path = r"NSCLC Radiomics Lung1.clinical-version3-Oct 2019.csv"
+    lung1_disq = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-128", "LUNG1-194"]
+    huh_disq = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH"]
 
     lung1: StudyGroup = StudyGroup("lung1")
-    lung1.add_all_patients(csv_path)
-    lung1.remove_multiple_patients(disq_patients)
+    lung1.add_all_patients(csv_path, pathtype="TCIA")
+    lung1.remove_multiple_patients(lung1_disq)
 
     huh = StudyGroup("huh")
-    huh.add_HUH_patients(path=huh_path)
+    huh.add_all_patients("HUH_clinical.csv", pathtype="HUH")
+    huh.remove_multiple_patients(huh_disq)
 
     lung1.print_statistics()
+
+

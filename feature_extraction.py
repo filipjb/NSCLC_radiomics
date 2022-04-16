@@ -266,3 +266,12 @@ def calculate_HLHGLRLM_features(patient_group, filepath, filetype, struc, mute=T
     pd.DataFrame.to_csv(
             features_df, os.path.join(current_dir, rf"feature_files\{patient_group.groupID}_HLH_GLRLM.csv")
         )
+
+
+if __name__ == '__main__':
+    huh_path = r"C:\Users\filip\Downloads\radiomics_data\HUH_data"
+    huh = StudyGroup("huh")
+    huh.add_all_patients("HUH_clinical.csv", pathtype="HUH")
+
+    calculate_shape_features(huh, huh_path, "HUH", struc="GTVp", mute=False)
+    

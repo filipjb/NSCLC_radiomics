@@ -5,7 +5,8 @@ from lifelines.statistics import logrank_test
 import numpy as np
 from lifelines import CoxPHFitter
 import re
-from scipy.stats import ks_2samp, cramervonmises_2samp
+from resampy import resample
+from scipy.stats import ks_2samp, cramervonmises_2samp, mannwhitneyu
 from matplotlib.legend import Legend
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
@@ -28,8 +29,8 @@ lung1_clinical = pd.read_csv(
 disq_lung1 = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "LUNG1-128"]
 for i in disq_lung1:
     lung1_clinical = lung1_clinical.drop(lung1_clinical[lung1_clinical.PatientID == i].index[0])
-
-disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH", "14_radiomics_HUH"]
+# 14_radiomics_HUH is large volume outlier
+disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH"]
 for i in disq_huh:
     huh_clinical = huh_clinical.drop(huh_clinical[huh_clinical.PatientID == i].index[0])
 
@@ -77,10 +78,6 @@ def compare_km(feature: str):
 
     lin3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
     lin4, = plt.plot(ref_under[0], ref_under[1], color="red")
-
-
-    cvm13 = cramervonmises_2samp(lin1.get_xdata(), lin3.get_xdata())
-    print(cvm13)
 
     plt.gca().legend([lin2, lin4], ["Validation", "Aerts et al."], loc=1)
 
@@ -226,20 +223,10 @@ def thresholded_histograms(df, feature: str, clinical: str):
 
 if __name__ == '__main__':
 
-    compare_km("Energy")
-
-    plot_km(lung1_firstorder, "Energy", lung1_firstorder["Energy"].median(), "Lung1")
+    compare_histograms(lung1_shape, huh_shape, "SurfaceVolumeRatio")
 
 
-    '''
-    compare_histograms(lung1_firstorder, huh_firstorder, "Energy")
-    compare_histograms(lung1_shape, huh_shape, "Compactness2")
-    compare_histograms(lung1_glrlm, huh_glrlm, "GrayLevelNonUniformity")
-    compare_histograms(lung1_hlh, huh_hlh, "HLH GrayLevelNonUniformity")
-    '''
 
-    #test_all_features(lung1_shape, huh_shape)
-    #plt.show()
 
 
 
