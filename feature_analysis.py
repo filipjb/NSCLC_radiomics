@@ -129,7 +129,8 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     return l1, l2,
 
 
-def signature_cox_model():
+def signature_cox_model(mute=False):
+    # Exposed group are patients with feate values above feature median
     energy = pd.DataFrame(lung1_firstorder["Energy"] > lung1_firstorder["Energy"].median())
     comp = lung1_shape["Compactness2"] > lung1_shape["Compactness2"].median()
     text = lung1_glrlm["GrayLevelNonUniformity"] > lung1_glrlm["GrayLevelNonUniformity"].median()
@@ -138,12 +139,19 @@ def signature_cox_model():
     event = lung1_firstorder["deadstatus.event"]
 
     df = energy.join([comp, text, wave, time, event])
+    # Renaming for brevity
+    df.rename(columns={"GrayLevelNonUniformity": "GLNU", "HLH GrayLevelNonUniformity": "HLH GLNU"}, inplace=True)
 
     fitter = CoxPHFitter()
     fitter.fit(df, duration_col="Survival.time", event_col="deadstatus.event")
-    fitter.print_summary()
-    fitter.plot()
-    plt.show()
+    coefs = fitter.summary
+    if not mute:
+        fitter.print_summary()
+    fitter.plot()   # Plots regression coefficients with 95% confidence intervals
+
+    test = fitter.log_likelihood_ratio_test()
+
+    return coefs, test.summary
 
 
 def plot_signature_km(firstorder, shape, texture, wavelet):
@@ -223,9 +231,10 @@ def thresholded_histograms(df, feature: str, clinical: str):
 
 if __name__ == '__main__':
 
-    compare_histograms(lung1_shape, huh_shape, "SurfaceVolumeRatio")
+    coefs, test = signature_cox_model(mute=True)
+    plt.show()
 
-
+    #compare_km("HLH GrayLevelNonUniformity")
 
 
 

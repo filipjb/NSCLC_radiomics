@@ -1,0 +1,5 @@
+covariate,coef,exp(coef),coef lower 95%,coef upper 95%,p
+Energy,0.368,1.445,-0.306,1.042,0.285
+Compactness2,0.028,1.028,-0.202,0.257,0.813
+GrayLevelNonUniformity,0.316,1.372,-0.308,0.94,0.321
+HLH GrayLevelNonUniformity,-0.297,0.743,-1.048,0.454,0.439
