@@ -8,6 +8,9 @@ import re
 from resampy import resample
 from scipy.stats import ks_2samp, cramervonmises_2samp, mannwhitneyu
 from matplotlib.legend import Legend
+from lifelines.utils import k_fold_cross_validation
+from functools import reduce
+
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
 lung1_shape = pd.read_csv(r"feature_files\lung1_shape.csv")
@@ -129,8 +132,8 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     return l1, l2,
 
 
-def signature_cox_model(mute=False):
-    # Exposed group are patients with feate values above feature median
+def signature_cox_model(modeltype="radiomics", mute=False):
+    # --------------- dfs for radiomics model ---------------- #
     energy = pd.DataFrame(lung1_firstorder["Energy"] > lung1_firstorder["Energy"].median())
     comp = lung1_shape["Compactness2"] > lung1_shape["Compactness2"].median()
     text = lung1_glrlm["GrayLevelNonUniformity"] > lung1_glrlm["GrayLevelNonUniformity"].median()
@@ -138,24 +141,121 @@ def signature_cox_model(mute=False):
     time = lung1_firstorder["Survival.time"]
     event = lung1_firstorder["deadstatus.event"]
 
-    df = energy.join([comp, text, wave, time, event])
-    # Renaming for brevity
-    df.rename(columns={"GrayLevelNonUniformity": "GLNU", "HLH GrayLevelNonUniformity": "HLH GLNU"}, inplace=True)
+    # ---------------- dfs for basic clinical moodel ------------- #
+    age = pd.DataFrame(lung1_firstorder["age"].round())
+    sex = pd.get_dummies(lung1_firstorder["gender"]).drop("male", axis=1).rename(columns={"female": "gender"})
+
+    stage = list()
+    for row in lung1_firstorder["Overall.Stage"]:
+        if row == "I":
+            stage.append({"Overall.stage": 1})
+        elif row == "II":
+            stage.append({"Overall.stage": 2})
+        elif row == "IIIa" or row == "IIIb":
+            stage.append({"Overall.stage": 3})
+        else:
+            stage.append({"Overall.stage": pd.NA})
+    stage = pd.DataFrame(stage)
+
+    # -------------- dfs for tnm model --------------- #
+    t = pd.DataFrame(lung1_firstorder["clinical.T.Stage"]).astype(int)
+    n = lung1_firstorder["Clinical.N.Stage"]
+    m = lung1_firstorder["Clinical.M.Stage"]
+
+    volume = pd.DataFrame(lung1_shape["VoxelVolume"])
+
+    if modeltype == "radiomics":
+        df = energy.join([comp, text, wave, time, event])
+        # Renaming for brevity
+        df.rename(columns={"GrayLevelNonUniformity": "GLNU", "HLH GrayLevelNonUniformity": "HLH GLNU"}, inplace=True)
+
+    elif modeltype == "clinical":
+        df = age.join([sex, stage, time, event])
+        df = df.dropna()
+
+    elif modeltype == "tnm":
+        print(t)
+        print(n)
+        print(m)
+        df = t.join([n, m, stage, time, event])
+        df = df.dropna()
+
+    elif modeltype == "volume":
+        df = volume.join([time, event])
+
+    else:
+        print("No valid modeltype")
+        quit()
 
     fitter = CoxPHFitter()
     fitter.fit(df, duration_col="Survival.time", event_col="deadstatus.event")
-    coefs = fitter.summary
+
     if not mute:
-        fitter.print_summary()
-    fitter.plot()   # Plots regression coefficients with 95% confidence intervals
+        fitter.print_summary(decimals=3)
+        fitter.plot()  # Plots regression coefficients with 95% confidence intervals
+        plt.show()
 
-    test = fitter.log_likelihood_ratio_test()
-
-    return coefs, test.summary
+    return fitter, df
 
 
-def plot_signature_km(firstorder, shape, texture, wavelet):
-    pass
+def plot_signature_km():
+    df = pd.DataFrame(lung1_firstorder["Energy"])
+    df = df.join(
+        [lung1_shape["Compactness2"], lung1_glrlm["GrayLevelNonUniformity"], lung1_hlh["HLH GrayLevelNonUniformity"]]
+    )
+    cph, train = signature_cox_model(modeltype="radiomics", mute=True)
+    weights = cph.params_
+
+    combined = pd.DataFrame(df["Energy"] * weights["Energy"] + df["Compactness2"] * weights["Compactness2"]
+                            + df["GrayLevelNonUniformity"] * weights["GLNU"]
+                            + df["HLH GrayLevelNonUniformity"] * weights["HLH GLNU"])
+
+    combined = combined.join([lung1_firstorder["Survival.time"], lung1_firstorder["deadstatus.event"]])
+
+    threshold = combined[0].median()
+    group1 = combined[combined[0] > threshold]
+    group2 = combined[combined[0] <= threshold]
+    print(group1)
+    print(group2)
+    t1 = group1["Survival.time"]
+    t2 = group2["Survival.time"]
+    e1 = group1["deadstatus.event"]
+    e2 = group2["deadstatus.event"]
+
+    kmf = KaplanMeierFitter()
+    fig, ax = plt.subplots()
+
+    kmf.fit(t1, e1)
+    lin1, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"],
+                     color="blue", linestyle="--", label="> median")
+
+    kmf.fit(t2, e2)
+    lin2, = plt.plot(kmf.survival_function_.index, kmf.survival_function_["KM_estimate"],
+                     color="blue", label="<= median")
+
+    ref_over = pd.read_csv("automeris_coords/lung1overall_overmedian.csv", delimiter=";", decimal=",", header=None)
+    ref_under = pd.read_csv("automeris_coords/lung1overall_undermedian.csv", delimiter=";", decimal=",", header=None)
+    lin3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
+    lin4, = plt.plot(ref_under[0], ref_under[1], color="red")
+
+    plt.gca().set_xlim(0, 1500)
+    plt.gca().legend([lin2, lin1], ["<= median", "> median"])
+    plt.legend()
+    plt.title(f"Combined signature")
+    plt.ylabel("Survival probability")
+    plt.xlabel("Survival time (days)")
+
+    plt.gca().legend([lin2, lin4], ["Validation", "Aerts et al."], loc=1)
+    leg = Legend(plt.gca(), [lin4, lin3], ["<= median", "> median"], loc=3)
+    plt.gca().add_artist(leg)
+    lines = leg.get_lines()
+    for line in lines:
+        line.set_color("black")
+
+    fig.set_figwidth(8)
+    fig.set_figheight(5)
+
+    plt.show()
 
 
 # Comparing the histogram of a feature value across the two cohorts
@@ -230,12 +330,8 @@ def thresholded_histograms(df, feature: str, clinical: str):
 
 
 if __name__ == '__main__':
+    plt.style.use("bmh")
 
-    coefs, test = signature_cox_model(mute=True)
-    plt.show()
+    # cph, train = signature_cox_model(modeltype="volume", mute=False)
 
-    #compare_km("HLH GrayLevelNonUniformity")
-
-
-
-
+    plot_signature_km()
