@@ -9,7 +9,9 @@ from resampy import resample
 from scipy.stats import ks_2samp, cramervonmises_2samp, mannwhitneyu
 from matplotlib.legend import Legend
 from lifelines.utils import k_fold_cross_validation
-from functools import reduce
+from sklearn import tree, linear_model
+from sklearn.model_selection import train_test_split, cross_validate, cross_val_score
+from sklearn.feature_selection import SelectFromModel, SelectKBest
 
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
@@ -329,9 +331,54 @@ def thresholded_histograms(df, feature: str, clinical: str):
     plt.show()
 
 
+def regressor_selection(df_list: list, regtype="tree"):
+    lst = list()
+    for featuregroup in df_list:
+        x = featuregroup.drop(
+            labels=["Unnamed: 0", "Survival.time", "PatientID", "Overall.Stage", "Histology", "deadstatus.event", "gender",
+                    "clinical.T.Stage", "Clinical.N.Stage", "Clinical.M.Stage", "age"],
+            axis=1
+        )
+        lst.append(x)
+    X = pd.concat(lst, axis=1)
+
+    # Removing duplicate columns
+    X = X.loc[:, ~X.columns.duplicated()]
+    Y = df_list[0]["Survival.time"]
+    # Data split
+    X_train, X_val, Y_train, Y_val = train_test_split(X, Y, random_state=666, train_size=0.8)
+
+    if regtype == "lasso":
+        model = linear_model.Lasso(max_iter=1000, random_state=0)
+        model.fit(X_train, Y_train)
+
+    elif regtype == "tree":
+        model = tree.ExtraTreeRegressor(random_state=0)
+        model.fit(X_train, Y_train)
+
+    else:
+        print("Error: Invalid modeltype")
+        quit()
+
+    print(f"Model score for {model.__str__()}: {model.score(X_val, Y_val)}")
+
+    selector = SelectKBest(k=15)
+    selector.fit(X, Y)
+    print(selector.get_feature_names_out())
+
+    Y_pred = model.predict(X_val)
+    plt.scatter(X_val.index, Y_val)
+    plt.scatter(X_val.index, Y_pred)
+    plt.show()
+
+    imps = pd.DataFrame({"Feature": list(X.columns), "Importance": model.feature_importances_})
+    #plt.barh([x for x in list(X.columns)], importances["Importance"])
+    #plt.show()
+
+
+
 if __name__ == '__main__':
     plt.style.use("bmh")
 
     # cph, train = signature_cox_model(modeltype="volume", mute=False)
-
-    plot_signature_km()
+    tree = regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh], regtype="tree")
