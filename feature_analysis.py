@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.cm import ScalarMappable
 import pandas as pd
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
@@ -289,11 +290,11 @@ def compare_histograms(df1, df2, featurename):
     plt.show()
 
 
-def test_all_features(df1, df2):
+def test_featuregroup(df1, df2, k=None, log=False, tight=False):
     df1 = df1.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
-                    "Survival.time", "Unnamed: 0", "Clinical.M.Stage"], axis=1)
+                    "Survival.time", "Unnamed: 0", "Clinical.M.Stage", "clinical.T.Stage", "Clinical.N.Stage"], axis=1)
     df2 = df2.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
-                    "Survival.time", "Unnamed: 0", "Clinical.M.Stage"], axis=1)
+                    "Survival.time", "Unnamed: 0", "Clinical.M.Stage", "clinical.T.Stage", "Clinical.N.Stage"], axis=1)
 
     result = dict()
     for col in df1:
@@ -301,12 +302,64 @@ def test_all_features(df1, df2):
         col2 = df2[col]
         stat, p = ks_2samp(col1, col2)
         result.update({col: p})
-    result = dict(sorted(result.items(), key=lambda x: x[1]))
+    result = pd.DataFrame(result, index=[0]).transpose()
+
+    if k is not None:
+        result = result.nlargest(k, columns=0)
+    result = result.sort_values(by=0)
+
+    my_cmap = plt.get_cmap("Oranges")
+    rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
 
     fig, ax = plt.subplots()
-    bars = ax.barh(list(result.keys()), list(result.values()), edgecolor="black")
+    if log:
+        plt.xscale("log")
+    bars = ax.barh(result.index, result[0], edgecolor="black", color=my_cmap(rescale(result[0])))
     plt.xlabel("p-value")
     ax.bar_label(bars)
+    if tight:
+        plt.tight_layout()
+    plt.show()
+    return result
+
+
+def test_all_features(k=10):
+    lung1_df = lung1_firstorder.merge(lung1_shape)
+    lung1_df = lung1_df.merge(lung1_glrlm)
+    lung1_df = lung1_df.merge(lung1_hlh)
+
+    lung1_df = lung1_df.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
+                              "Survival.time", "Unnamed: 0", "Clinical.M.Stage", "clinical.T.Stage",
+                              "Clinical.N.Stage"], axis=1)
+
+    huh_df = huh_firstorder.merge(huh_shape)
+    huh_df = huh_df.merge(huh_glrlm)
+    huh_df = huh_df.merge(huh_hlh)
+
+    huh_df = huh_df.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
+                          "Survival.time", "Unnamed: 0", "Clinical.M.Stage", "clinical.T.Stage", "Clinical.N.Stage"],
+                         axis=1)
+
+    result = dict()
+    for col in lung1_df:
+        col1 = lung1_df[col]
+        col2 = huh_df[col]
+        stat, p = ks_2samp(col1, col2)
+        result.update({col: p})
+
+    result = pd.DataFrame(result, index=[0]).transpose()
+    result = result.nlargest(k, columns=0)
+    result = result.sort_values(by=0)
+
+    my_cmap = plt.get_cmap("Oranges")
+    rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
+
+    fig, ax = plt.subplots()
+    bars = ax.barh(result.index, result[0].round(3), edgecolor="black", color=my_cmap(rescale(result[0])))
+    plt.xlabel("p-value")
+    ax.bar_label(bars)
+    plt.title(f"{k} most similarly distributed features")
+    plt.tight_layout()
     plt.show()
     return result
 
@@ -367,18 +420,25 @@ def regressor_selection(df_list: list, regtype="tree"):
     print(selector.get_feature_names_out())
 
     Y_pred = model.predict(X_val)
+    print(tree)
     plt.scatter(X_val.index, Y_val)
     plt.scatter(X_val.index, Y_pred)
     plt.show()
 
     imps = pd.DataFrame({"Feature": list(X.columns), "Importance": model.feature_importances_})
-    #plt.barh([x for x in list(X.columns)], importances["Importance"])
-    #plt.show()
-
+    plt.barh([x for x in list(X.columns)], imps["Importance"])
+    plt.show()
 
 
 if __name__ == '__main__':
-    plt.style.use("bmh")
-
+    #plt.style.use("bmh")
     # cph, train = signature_cox_model(modeltype="volume", mute=False)
-    tree = regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh], regtype="tree")
+    #tree = regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh], regtype="tree")
+
+    #df = energy.join([comp, text, wave, time, event])
+
+    #test_all_features()
+    #compare_histograms(lung1_shape, huh_shape, "LeastAxisLength")
+    test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
+
+

@@ -11,8 +11,6 @@ import numpy as np
 class IndexTracker:
     def __init__(self, ax, X):
         self.ax = ax
-        ax.set_title('use scroll wheel to navigate images')
-
         self.X = X
 
         if len(np.shape(X)) == 4:

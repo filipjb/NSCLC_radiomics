@@ -544,7 +544,7 @@ class StudyGroup:
         print("Nx:", N[4])
         print("N Sum:", sum(N))
         print()
-        print("TNM:", TNM)
+        print("TNM:", np.array(TNM))
         print("TNM sum:", sum(TNM))
 
 
@@ -565,6 +565,5 @@ if __name__ == '__main__':
     huh.add_all_patients("HUH_clinical.csv", pathtype="HUH")
     huh.remove_multiple_patients(huh_disq)
 
-    lung1.print_statistics()
-
+    huh[13].view_segmentations(huh_path, pathtype="HUH")
 
