@@ -36,7 +36,7 @@ disq_lung1 = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "
 for i in disq_lung1:
     lung1_clinical = lung1_clinical.drop(lung1_clinical[lung1_clinical.PatientID == i].index[0])
 # 14_radiomics_HUH is large volume outlier
-disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH"]
+disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH", "14_radiomics_HUH"]
 for i in disq_huh:
     huh_clinical = huh_clinical.drop(huh_clinical[huh_clinical.PatientID == i].index[0])
 
@@ -430,6 +430,26 @@ def regressor_selection(df_list: list, regtype="tree"):
     plt.show()
 
 
+def separate_LA_lung1():
+    new_firstorder = lung1_firstorder[
+        (lung1_firstorder["Overall.Stage"] != "I") & (lung1_firstorder["Overall.Stage"] != "II")
+        ]
+
+    new_shape = lung1_shape[
+        (lung1_shape["Overall.Stage"] != "I") & (lung1_shape["Overall.Stage"] != "II")
+        ]
+
+    new_glrlm = lung1_glrlm[
+        (lung1_glrlm["Overall.Stage"] != "I") & (lung1_glrlm["Overall.Stage"] != "II")
+        ]
+
+    new_hlh = lung1_hlh[
+        (lung1_hlh["Overall.Stage"] != "I") & (lung1_hlh["Overall.Stage"] != "II")
+        ]
+
+    return new_firstorder, new_shape, new_glrlm, new_hlh
+
+
 if __name__ == '__main__':
     #plt.style.use("bmh")
     # cph, train = signature_cox_model(modeltype="volume", mute=False)
@@ -438,7 +458,12 @@ if __name__ == '__main__':
     #df = energy.join([comp, text, wave, time, event])
 
     #test_all_features()
-    #compare_histograms(lung1_shape, huh_shape, "LeastAxisLength")
-    test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
+    #compare_histograms(lung1_hlh, huh_hlh, "HLH ShortRunLowGrayLevelEmphasis")
+    #test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
+
+    la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_lung1()
+
+    compare_histograms(la_lung1_shape,huh_shape, "VoxelVolume")
+
 
 
