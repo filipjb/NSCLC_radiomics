@@ -7,13 +7,13 @@ import numpy as np
 from lifelines import CoxPHFitter
 import re
 from resampy import resample
-from scipy.stats import ks_2samp, cramervonmises_2samp, mannwhitneyu
+from scipy.stats import ks_2samp, cramervonmises_2samp, mannwhitneyu, pearsonr
 from matplotlib.legend import Legend
 from lifelines.utils import k_fold_cross_validation
 from sklearn import tree, linear_model
 from sklearn.model_selection import train_test_split, cross_validate, cross_val_score
 from sklearn.feature_selection import SelectFromModel, SelectKBest
-
+import pingouin as pg
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
 lung1_shape = pd.read_csv(r"feature_files\lung1_shape.csv")
@@ -459,26 +459,59 @@ def separate_LA_lung1():
     return new_firstorder, new_shape, new_glrlm, new_hlh
 
 
+def featurevolume_correlation(featurname, log=False):
+    lung1_volume = lung1_shape["VoxelVolume"]
+    huh_volume = huh_shape["VoxelVolume"]
+
+    try:
+        lung1_feat = lung1_firstorder[featurname]
+        huh_feat = huh_firstorder[featurname]
+    except KeyError:
+        pass
+    try:
+        lung1_feat = lung1_shape[featurname]
+        huh_feat = huh_shape[featurname]
+    except KeyError:
+        pass
+    try:
+        lung1_feat = lung1_glrlm[featurname]
+        huh_feat = huh_glrlm[featurname]
+    except KeyError:
+        pass
+    try:
+        lung1_feat = lung1_hlh[featurname]
+        huh_feat = huh_hlh[featurname]
+    except KeyError:
+        pass
+
+    lung1corr = pearsonr(lung1_feat, lung1_volume)
+    huhcorr = pearsonr(huh_feat, huh_volume)
+
+    fig, ax = plt.subplots()
+
+    if log:
+        plt.xscale("log")
+        plt.yscale("log")
+
+    ax.scatter(lung1_volume, lung1_feat, edgecolors="black", s=70, label="Lung1")
+    ax.scatter(huh_volume, huh_feat, edgecolors="black", s=70, color="orange", label="HUH")
+    plt.legend()
+    plt.xlabel("Volume")
+    plt.ylabel(featurname)
+    fig.set_figwidth(10)
+    fig.set_figheight(6)
+    plt.title(f"Lung1 Pearson correlation coefficient = {lung1corr[0]}, p = {lung1corr[1].round(4)}\n")
+
+
 la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_lung1()
 
 
-
 if __name__ == '__main__':
-    #plt.style.use("bmh")
+    plt.style.use("bmh")
     # cph, train = signature_cox_model(modeltype="volume", mute=False)
     #tree = regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh], regtype="tree")
 
-    #df = energy.join([comp, text, wave, time, event])
+    #test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
 
-
-    #compare_histograms(la_lung1_shape, huh_shape, "VoxelVolume")
-
-
-    #compare_histograms(la_lung1_shape, huh_shape, "VoxelVolume")
-    #plot_km(lung1_hlh, "HLH GrayLevelNonUniformity", lung1_hlh["HLH GrayLevelNonUniformity"].median(), "Lung1")
-
-    test_all_features(k=10, lung1_la=False)
+    featurevolume_correlation("Energy", log=True)
     plt.show()
-    #test_featuregroup(lung1_firstorder, huh_firstorder, log=True, tight=False)
-
-
