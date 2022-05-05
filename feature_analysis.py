@@ -36,7 +36,7 @@ disq_lung1 = ["LUNG1-014", "LUNG1-021", "LUNG1-085", "LUNG1-095", "LUNG1-194", "
 for i in disq_lung1:
     lung1_clinical = lung1_clinical.drop(lung1_clinical[lung1_clinical.PatientID == i].index[0])
 # 14_radiomics_HUH is large volume outlier
-disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH", "14_radiomics_HUH"]
+disq_huh = ["26_radiomics_HUH", "27_radiomics_HUH", "28_radiomics_HUH"]
 for i in disq_huh:
     huh_clinical = huh_clinical.drop(huh_clinical[huh_clinical.PatientID == i].index[0])
 
@@ -308,30 +308,37 @@ def test_featuregroup(df1, df2, k=None, log=False, tight=False):
         result = result.nlargest(k, columns=0)
     result = result.sort_values(by=0)
 
-    my_cmap = plt.get_cmap("Oranges")
-    rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
-
     fig, ax = plt.subplots()
     if log:
         plt.xscale("log")
-    bars = ax.barh(result.index, result[0], edgecolor="black", color=my_cmap(rescale(result[0])))
+
+    cc = list(map(lambda x: 'indianred' if x < 0.05 else 'olivedrab', result[0]))
+    bars = ax.barh(result.index, result[0], edgecolor="black", color=cc)
+
     plt.xlabel("p-value")
     ax.bar_label(bars)
+    plt.axvline(x=0.05, linewidth=1.7, color="black", linestyle="--")
+
     if tight:
         plt.tight_layout()
     plt.show()
     return result
 
 
-def test_all_features(k=10):
-    lung1_df = lung1_firstorder.merge(lung1_shape)
-    lung1_df = lung1_df.merge(lung1_glrlm)
-    lung1_df = lung1_df.merge(lung1_hlh)
+def test_all_features(k=10, lung1_la=False):
+    if lung1_la:
+        lung1_df = la_lung1_firstorder.merge(la_lung1_shape)
+        lung1_df = lung1_df.merge(la_lung1_glrlm)
+        lung1_df = lung1_df.merge(la_lung1_hlh)
+
+    else:
+        lung1_df = lung1_firstorder.merge(lung1_shape)
+        lung1_df = lung1_df.merge(lung1_glrlm)
+        lung1_df = lung1_df.merge(lung1_hlh)
 
     lung1_df = lung1_df.drop(["PatientID", "age", "Overall.Stage", "Histology", "gender", "deadstatus.event",
                               "Survival.time", "Unnamed: 0", "Clinical.M.Stage", "clinical.T.Stage",
                               "Clinical.N.Stage"], axis=1)
-
     huh_df = huh_firstorder.merge(huh_shape)
     huh_df = huh_df.merge(huh_glrlm)
     huh_df = huh_df.merge(huh_hlh)
@@ -351,16 +358,18 @@ def test_all_features(k=10):
     result = result.nlargest(k, columns=0)
     result = result.sort_values(by=0)
 
-    my_cmap = plt.get_cmap("Oranges")
-    rescale = lambda y: (y - np.min(y)) / (np.max(y) - np.min(y))
+    cc = list(map(lambda x: 'indianred' if x < 0.05 else 'olivedrab', result[0]))
 
     fig, ax = plt.subplots()
-    bars = ax.barh(result.index, result[0].round(3), edgecolor="black", color=my_cmap(rescale(result[0])))
+    bars = ax.barh(result.index, result[0].round(3), height=0.5, edgecolor="black", color=cc)
     plt.xlabel("p-value")
     ax.bar_label(bars)
-    plt.title(f"{k} most similarly distributed features")
+    plt.axvline(x=0.05, linewidth=1.7, color="black", linestyle="--")
+    if lung1_la:
+        plt.title(f"{k} most similarly distributed features, LA")
+    else:
+        plt.title(f"{k} most similarly distributed features")
     plt.tight_layout()
-    plt.show()
     return result
 
 
@@ -450,6 +459,10 @@ def separate_LA_lung1():
     return new_firstorder, new_shape, new_glrlm, new_hlh
 
 
+la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_lung1()
+
+
+
 if __name__ == '__main__':
     #plt.style.use("bmh")
     # cph, train = signature_cox_model(modeltype="volume", mute=False)
@@ -457,13 +470,15 @@ if __name__ == '__main__':
 
     #df = energy.join([comp, text, wave, time, event])
 
-    #test_all_features()
-    #compare_histograms(lung1_hlh, huh_hlh, "HLH ShortRunLowGrayLevelEmphasis")
-    #test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
 
-    la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_lung1()
+    #compare_histograms(la_lung1_shape, huh_shape, "VoxelVolume")
 
-    compare_histograms(la_lung1_shape,huh_shape, "VoxelVolume")
 
+    #compare_histograms(la_lung1_shape, huh_shape, "VoxelVolume")
+    #plot_km(lung1_hlh, "HLH GrayLevelNonUniformity", lung1_hlh["HLH GrayLevelNonUniformity"].median(), "Lung1")
+
+    test_all_features(k=10, lung1_la=False)
+    plt.show()
+    #test_featuregroup(lung1_firstorder, huh_firstorder, log=True, tight=False)
 
 
