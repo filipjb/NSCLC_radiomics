@@ -206,6 +206,11 @@ def plot_signature_km():
     df = df.join(
         [lung1_shape["Compactness2"], lung1_glrlm["GrayLevelNonUniformity"], lung1_hlh["HLH GrayLevelNonUniformity"]]
     )
+
+    huh_df = pd.concat(
+        [huh_firstorder["Energy"], huh_shape["Compactness2"], huh_glrlm["GrayLevelNonUniformity"],
+         huh_hlh["HLH GrayLevelNonUniformity"]], axis=1)
+
     cph, train = signature_cox_model(modeltype="radiomics", mute=True)
     weights = cph.params_
 
@@ -213,13 +218,18 @@ def plot_signature_km():
                             + df["GrayLevelNonUniformity"] * weights["GLNU"]
                             + df["HLH GrayLevelNonUniformity"] * weights["HLH GLNU"])
 
+    huh_combined = pd.DataFrame(huh_df["Energy"] * weights["Energy"] + huh_df["Compactness2"] * weights["Compactness2"]
+                            + huh_df["GrayLevelNonUniformity"] * weights["GLNU"]
+                            + huh_df["HLH GrayLevelNonUniformity"] * weights["HLH GLNU"])
+
     combined = combined.join([lung1_firstorder["Survival.time"], lung1_firstorder["deadstatus.event"]])
+    # Reuturning this to allow combined signature to be used in other functions
+    total_combined = combined
 
     threshold = combined[0].median()
     group1 = combined[combined[0] > threshold]
     group2 = combined[combined[0] <= threshold]
-    print(group1)
-    print(group2)
+
     t1 = group1["Survival.time"]
     t2 = group2["Survival.time"]
     e1 = group1["deadstatus.event"]
@@ -258,7 +268,7 @@ def plot_signature_km():
     fig.set_figwidth(8)
     fig.set_figheight(5)
 
-    plt.show()
+    return total_combined, huh_combined
 
 
 # Comparing the histogram of a feature value across the two cohorts
@@ -485,7 +495,6 @@ def featurevolume_correlation(featurname, log=False):
         pass
 
     lung1corr = pearsonr(lung1_feat, lung1_volume)
-    huhcorr = pearsonr(huh_feat, huh_volume)
 
     fig, ax = plt.subplots()
 
@@ -503,6 +512,32 @@ def featurevolume_correlation(featurname, log=False):
     plt.title(f"Lung1 Pearson correlation coefficient = {lung1corr[0]}, p = {lung1corr[1].round(4)}\n")
 
 
+def signaturevolume_correlation(log=False):
+
+    lung1_sig, huh_sig = plot_signature_km()
+    lung1_sig = lung1_sig[0]
+    huh_sig = huh_sig[0]
+
+    lung1_volume = lung1_shape["VoxelVolume"]
+    huh_volume = huh_shape["VoxelVolume"]
+
+    lung1corr = pearsonr(lung1_sig, lung1_volume)
+
+    fig, ax = plt.subplots()
+    if log:
+        plt.xscale("log")
+        plt.yscale("log")
+
+    ax.scatter(lung1_volume, lung1_sig, edgecolors="black", s=70, label="Lung1")
+    ax.scatter(huh_volume, huh_sig, edgecolors="black", s=70, color="orange", label="HUH")
+    plt.xlabel("Volume")
+    plt.ylabel("Combined signature")
+    fig.set_figwidth(10)
+    fig.set_figheight(6)
+    plt.title(f"Lung1 Pearson correlation coefficient = {lung1corr[0]}, p = {lung1corr[1].round(4)}\n")
+
+
+
 la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_lung1()
 
 
@@ -513,5 +548,5 @@ if __name__ == '__main__':
 
     #test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
 
-    featurevolume_correlation("Energy", log=True)
+    signaturevolume_correlation(log=True)
     plt.show()
