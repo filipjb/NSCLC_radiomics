@@ -403,7 +403,7 @@ def thresholded_histograms(df, feature: str, clinical: str):
     plt.show()
 
 
-def regressor_selection(df_list: list, regtype="tree"):
+def regressor_selection(df_list: list):
     lst = list()
     for featuregroup in df_list:
         x = featuregroup.drop(
@@ -417,36 +417,30 @@ def regressor_selection(df_list: list, regtype="tree"):
     # Removing duplicate columns
     X = X.loc[:, ~X.columns.duplicated()]
     Y = df_list[0]["Survival.time"]
+    print(X)
+    print(Y)
     # Data split
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, random_state=666, train_size=0.8)
 
-    if regtype == "lasso":
-        model = linear_model.Lasso(max_iter=1000, random_state=0)
-        model.fit(X_train, Y_train)
+    sel = SelectFromModel(linear_model.LogisticRegression(
+        C=1, penalty="l1", solver="liblinear", random_state=111, max_iter=100
+    ))
+    sel.fit(X_train, Y_train)
 
-    elif regtype == "tree":
-        model = tree.ExtraTreeRegressor(random_state=0)
-        model.fit(X_train, Y_train)
+    selected_feat = X_train.columns[sel.get_support()]
+    print(selected_feat)
+    print(f"total features: {X_train.shape[1]}")
+    print(f"selected features: {len(selected_feat)}")
+    print(f"features with coefficients shrank to zero: {np.sum(sel.estimator_.coef_ == 0)}")
 
-    else:
-        print("Error: Invalid modeltype")
-        quit()
 
-    print(f"Model score for {model.__str__()}: {model.score(X_val, Y_val)}")
+    #plt.scatter(X_val.index, Y_val)
+    #plt.scatter(X_val.index, Y_pred)
+    #plt.show()
 
-    selector = SelectKBest(k=15)
-    selector.fit(X, Y)
-    print(selector.get_feature_names_out())
-
-    Y_pred = model.predict(X_val)
-    print(tree)
-    plt.scatter(X_val.index, Y_val)
-    plt.scatter(X_val.index, Y_pred)
-    plt.show()
-
-    imps = pd.DataFrame({"Feature": list(X.columns), "Importance": model.feature_importances_})
-    plt.barh([x for x in list(X.columns)], imps["Importance"])
-    plt.show()
+    #imps = pd.DataFrame({"Feature": list(X.columns), "Importance": model.feature_importances_})
+    #plt.barh([x for x in list(X.columns)], imps["Importance"])
+    #plt.show()
 
 
 def separate_LA_lung1():
@@ -548,5 +542,5 @@ if __name__ == '__main__':
 
     #test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
 
-    signaturevolume_correlation(log=True)
-    plt.show()
+    regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh])
+    #signaturevolume_correlation(log=True)
