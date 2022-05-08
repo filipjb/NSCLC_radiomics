@@ -417,22 +417,19 @@ def regressor_selection(df_list: list):
     # Removing duplicate columns
     X = X.loc[:, ~X.columns.duplicated()]
     Y = df_list[0]["Survival.time"]
+
+    for name, values in X.iteritems():
+        X[name] = values / values.max()
     print(X)
-    print(Y)
     # Data split
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, random_state=666, train_size=0.8)
 
-    sel = SelectFromModel(linear_model.LogisticRegression(
-        C=1, penalty="l1", solver="liblinear", random_state=111, max_iter=100
-    ))
-    sel.fit(X_train, Y_train)
-
-    selected_feat = X_train.columns[sel.get_support()]
-    print(selected_feat)
-    print(f"total features: {X_train.shape[1]}")
-    print(f"selected features: {len(selected_feat)}")
-    print(f"features with coefficients shrank to zero: {np.sum(sel.estimator_.coef_ == 0)}")
-
+    model = linear_model.LassoCV(cv=5, max_iter=10000)
+    model.fit(X_train, Y_train)
+    alpha = model.alpha_
+    lasso_best = linear_model.Lasso(alpha=alpha, max_iter=500000)
+    lasso_best.fit(X_train, Y_train)
+    print(list(zip(lasso_best.coef_, X)))
 
     #plt.scatter(X_val.index, Y_val)
     #plt.scatter(X_val.index, Y_pred)
