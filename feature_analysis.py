@@ -12,8 +12,8 @@ from matplotlib.legend import Legend
 from lifelines.utils import k_fold_cross_validation
 from sklearn import tree, linear_model
 from sklearn.model_selection import train_test_split, cross_validate, cross_val_score
-from sklearn.feature_selection import SelectFromModel, SelectKBest
-import pingouin as pg
+from sklearn.preprocessing import StandardScaler
+
 
 lung1_firstorder = pd.read_csv(r"feature_files\lung1_firstorder.csv")
 lung1_shape = pd.read_csv(r"feature_files\lung1_shape.csv")
@@ -85,7 +85,7 @@ def compare_km(feature: str):
     lin3, = plt.plot(ref_over[0], ref_over[1], color="red", linestyle="--")
     lin4, = plt.plot(ref_under[0], ref_under[1], color="red")
 
-    plt.gca().legend([lin2, lin4], ["Validation", "Aerts et al."], loc=1)
+    plt.gca().legend([lin2, lin4], ["This implementation", "Aerts et al."], loc=1)
 
     leg = Legend(plt.gca(), [lin4, lin3], ["<= median", "> median"], loc=3)
     plt.gca().add_artist(leg)
@@ -94,8 +94,6 @@ def compare_km(feature: str):
     lines = leg.get_lines()
     for line in lines:
         line.set_color("black")
-
-    plt.show()
 
 
 def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
@@ -132,7 +130,7 @@ def plot_km(dataframe, parameter: str, threshold, groupname: str, xlim=1500):
     fig.set_figwidth(8)
     fig.set_figheight(5)
 
-    return l1, l2,
+    return l1, l2
 
 
 def signature_cox_model(modeltype="radiomics", mute=False):
@@ -258,7 +256,7 @@ def plot_signature_km():
     plt.ylabel("Survival probability")
     plt.xlabel("Survival time (days)")
 
-    plt.gca().legend([lin2, lin4], ["Validation", "Aerts et al."], loc=1)
+    plt.gca().legend([lin2, lin4], ["This implementation", "Aerts et al."], loc=1)
     leg = Legend(plt.gca(), [lin4, lin3], ["<= median", "> median"], loc=3)
     plt.gca().add_artist(leg)
     lines = leg.get_lines()
@@ -268,7 +266,7 @@ def plot_signature_km():
     fig.set_figwidth(8)
     fig.set_figheight(5)
 
-    return total_combined, huh_combined
+    return total_combined, huh_combined, lin1, lin2
 
 
 # Comparing the histogram of a feature value across the two cohorts
@@ -290,8 +288,10 @@ def compare_histograms(df1, df2, featurename):
 
     binning = np.linspace(minimum, maximum, 30)
     fig, ax = plt.subplots()
-    ax.hist(df1, density=True, alpha=0.7, bins=binning, edgecolor="black", label=label1)
-    ax.hist(df2, density=True, alpha=0.7, bins=binning, edgecolor="black", label=label2)
+    ax.hist(df1, density=True, alpha=0.7, bins=binning, edgecolor="black", label=label1, color="blue")
+    ax.hist(df2, density=True, alpha=0.7, bins=binning, edgecolor="black", label=label2, color="orange")
+    ax.set_xlabel("Feature value")
+    ax.set_ylabel("Relative frequency")
     fig.set_figwidth(8)
     fig.set_figheight(5)
     plt.title(f"{featurename}, KS-statistic = {stat.__round__(5)}, p-value = {p.__round__(5)}")
@@ -417,27 +417,24 @@ def regressor_selection(df_list: list):
     # Removing duplicate columns
     X = X.loc[:, ~X.columns.duplicated()]
     Y = df_list[0]["Survival.time"]
-
-    for name, values in X.iteritems():
-        X[name] = values / values.max()
-    print(X)
-    # Data split
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, random_state=666, train_size=0.8)
 
-    model = linear_model.LassoCV(cv=5, max_iter=10000)
+    for name, values in X_train.iteritems():
+        X[name] = (values - values.mean()) / values.std()
+
+    print(X_train)
+    model = linear_model.LassoCV(cv=5, max_iter=1000000)
     model.fit(X_train, Y_train)
     alpha = model.alpha_
-    lasso_best = linear_model.Lasso(alpha=alpha, max_iter=500000)
+    lasso_best = linear_model.Lasso(alpha=alpha, max_iter=1000000)
     lasso_best.fit(X_train, Y_train)
     print(list(zip(lasso_best.coef_, X)))
 
-    #plt.scatter(X_val.index, Y_val)
-    #plt.scatter(X_val.index, Y_pred)
-    #plt.show()
-
-    #imps = pd.DataFrame({"Feature": list(X.columns), "Importance": model.feature_importances_})
-    #plt.barh([x for x in list(X.columns)], imps["Importance"])
-    #plt.show()
+    print("Score: ", lasso_best.score(X_val, Y_val))
+    Y_pred = lasso_best.predict(X_val)
+    plt.scatter(X_val.index, Y_val)
+    plt.scatter(X_val.index, Y_pred)
+    plt.show()
 
 
 def separate_LA_lung1():
@@ -460,32 +457,50 @@ def separate_LA_lung1():
     return new_firstorder, new_shape, new_glrlm, new_hlh
 
 
-def featurevolume_correlation(featurname, log=False):
-    lung1_volume = lung1_shape["VoxelVolume"]
-    huh_volume = huh_shape["VoxelVolume"]
+def featurevolume_correlation(featurename_x, featurename_y, log=False):
 
     try:
-        lung1_feat = lung1_firstorder[featurname]
-        huh_feat = huh_firstorder[featurname]
+        lung1_feat_x = lung1_firstorder[featurename_x]
+        huh_feat_x = huh_firstorder[featurename_x]
     except KeyError:
         pass
     try:
-        lung1_feat = lung1_shape[featurname]
-        huh_feat = huh_shape[featurname]
+        lung1_feat_y = lung1_firstorder[featurename_y]
+        huh_feat_y = huh_firstorder[featurename_y]
     except KeyError:
         pass
     try:
-        lung1_feat = lung1_glrlm[featurname]
-        huh_feat = huh_glrlm[featurname]
+        lung1_feat_x = lung1_shape[featurename_x]
+        huh_feat_x = huh_shape[featurename_x]
     except KeyError:
         pass
     try:
-        lung1_feat = lung1_hlh[featurname]
-        huh_feat = huh_hlh[featurname]
+        lung1_feat_y = lung1_shape[featurename_y]
+        huh_feat_y = huh_shape[featurename_y]
+    except KeyError:
+        pass
+    try:
+        lung1_feat_x = lung1_glrlm[featurename_x]
+        huh_feat_x = huh_glrlm[featurename_x]
+    except KeyError:
+        pass
+    try:
+        lung1_feat_y = lung1_glrlm[featurename_y]
+        huh_feat_y = huh_glrlm[featurename_y]
+    except KeyError:
+        pass
+    try:
+        lung1_feat_x = lung1_hlh[featurename_x]
+        huh_feat_x = huh_hlh[featurename_x]
+    except KeyError:
+        pass
+    try:
+        lung1_feat_y = lung1_hlh[featurename_y]
+        huh_feat_y = huh_hlh[featurename_y]
     except KeyError:
         pass
 
-    lung1corr = pearsonr(lung1_feat, lung1_volume)
+    lung1corr = pearsonr(lung1_feat_x, lung1_feat_y)
 
     fig, ax = plt.subplots()
 
@@ -493,40 +508,74 @@ def featurevolume_correlation(featurname, log=False):
         plt.xscale("log")
         plt.yscale("log")
 
-    ax.scatter(lung1_volume, lung1_feat, edgecolors="black", s=70, label="Lung1")
-    ax.scatter(huh_volume, huh_feat, edgecolors="black", s=70, color="orange", label="HUH")
+    ax.scatter(lung1_feat_x, lung1_feat_y, edgecolors="black", s=70, label="Lung1")
+    ax.scatter(huh_feat_x, huh_feat_y, edgecolors="black", s=70, color="orange", label="HUH")
     plt.legend()
-    plt.xlabel("Volume")
-    plt.ylabel(featurname)
+    plt.xlabel(f"{featurename_x}")
+    plt.ylabel(featurename_y)
     fig.set_figwidth(10)
     fig.set_figheight(6)
     plt.title(f"Lung1 Pearson correlation coefficient = {lung1corr[0]}, p = {lung1corr[1].round(4)}\n")
 
 
-def signaturevolume_correlation(log=False):
+def signaturefeature_correlation(featurename, log=False):
+
+    try:
+        lung1_feature = lung1_firstorder[featurename]
+        huh_feature = huh_firstorder[featurename]
+    except KeyError:
+        pass
+    try:
+        lung1_feature = lung1_shape[featurename]
+        huh_feature = huh_shape[featurename]
+    except KeyError:
+        pass
+    try:
+        lung1_feature = lung1_glrlm[featurename]
+        huh_feature = huh_glrlm[featurename]
+    except KeyError:
+        pass
+    try:
+        lung1_feature = lung1_hlh[featurename]
+        huh_feature = huh_hlh[featurename]
+    except KeyError:
+        pass
 
     lung1_sig, huh_sig = plot_signature_km()
     lung1_sig = lung1_sig[0]
     huh_sig = huh_sig[0]
 
-    lung1_volume = lung1_shape["VoxelVolume"]
-    huh_volume = huh_shape["VoxelVolume"]
-
-    lung1corr = pearsonr(lung1_sig, lung1_volume)
+    lung1corr = pearsonr(lung1_sig, lung1_feature)
 
     fig, ax = plt.subplots()
     if log:
         plt.xscale("log")
         plt.yscale("log")
 
-    ax.scatter(lung1_volume, lung1_sig, edgecolors="black", s=70, label="Lung1")
-    ax.scatter(huh_volume, huh_sig, edgecolors="black", s=70, color="orange", label="HUH")
-    plt.xlabel("Volume")
+    ax.scatter(lung1_feature, lung1_sig, edgecolors="black", s=70, label="Lung1")
+    ax.scatter(huh_feature, huh_sig, edgecolors="black", s=70, color="orange", label="HUH")
+    plt.xlabel(f"{featurename}")
     plt.ylabel("Combined signature")
     fig.set_figwidth(10)
     fig.set_figheight(6)
     plt.title(f"Lung1 Pearson correlation coefficient = {lung1corr[0]}, p = {lung1corr[1].round(4)}\n")
 
+
+def compare_energy_signature_km():
+    l1, l2 = plot_km(lung1_firstorder, "Energy", lung1_firstorder["Energy"].median(), "Lung1")
+    _, _, lin1, lin2 = plot_signature_km()
+    plt.clf()
+    ax = plt.gca()
+    ax.set_xlim(0, 1500)
+    plt.xlabel("Survival time (days)")
+    plt.ylabel("Survival probability")
+    ax.plot(lin1.get_data()[0], lin1.get_data()[1], "o", label="Signature > median", lw=3)
+    ax.plot(lin2.get_data()[0], lin2.get_data()[1], "o", label="Signature < median", lw=3)
+    ax.plot(l1.get_data()[0], l1.get_data()[1], label="Energy > median", lw=2, color="blue")
+    ax.plot(l2.get_data()[0], l2.get_data()[1], label="Energy < median", lw=2, color="orange")
+
+    plt.legend()
+    plt.show()
 
 
 la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_lung1()
@@ -534,10 +583,18 @@ la_lung1_firstorder, la_lung1_shape, la_lung1_glrlm, la_lung1_hlh = separate_LA_
 
 if __name__ == '__main__':
     plt.style.use("bmh")
-    # cph, train = signature_cox_model(modeltype="volume", mute=False)
+    #cph, train = signature_cox_model(modeltype="radiomics", mute=True)
+
     #tree = regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh], regtype="tree")
 
     #test_featuregroup(lung1_hlh, huh_hlh, log=True, tight=True)
 
-    regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh])
+    #regressor_selection([lung1_firstorder, lung1_shape, lung1_glrlm, lung1_hlh])
     #signaturevolume_correlation(log=True)
+    #featurevolume_correlation("Compactness2", "HLH GrayLevelNonUniformity", log=True)
+    #plot_km(lung1_hlh, feature, lung1_hlh[feature].median(), "Lung1")
+
+    #compare_histograms(lung1_firstorder, huh_firstorder, feature)
+    #plt.show()
+    #featurevolume_correlation("GrayLevelNonUniformityNormalized", "VoxelVolume", log=True)
+    compare_energy_signature_km()
